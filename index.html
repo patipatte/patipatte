@@ -191,65 +191,7 @@
     .stats-grid { grid-template-columns: repeat(3, 1fr); }
   }
 </style>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script>
-const SUPABASE_URL = 'https://vhiexugzcwfnxyujmuah.supabase.co';
-const SUPABASE_KEY = 'sb_publishable_ORg7VY3lEDTwYDly4Q_ywQ_J74P4r7g';
-const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-
-// Auth functions
-async function signUp(email, password, role, nom) {
-  const { data, error } = await sb.auth.signUp({
-    email, password,
-    options: { data: { role, nom } }
-  });
-  if (error) throw error;
-  await sb.from('profiles').insert({ id: data.user.id, role, nom, email });
-  return data;
-}
-
-async function signIn(email, password) {
-  const { data, error } = await sb.auth.signInWithPassword({ email, password });
-  if (error) throw error;
-  return data;
-}
-
-async function signOut() {
-  await sb.auth.signOut();
-  currentUser = null;
-  currentProfile = null;
-  goHome();
-}
-
-async function getProfile(userId) {
-  const { data } = await sb.from('profiles').select('*').eq('id', userId).single();
-  return data;
-}
-
-async function saveReservation(gardienId, animal, nomAnimal, debut, fin, message) {
-  if (!currentUser) { alert('Connectez-vous pour réserver !'); return; }
-  const { error } = await sb.from('reservations').insert({
-    proprietaire_id: currentUser.id,
-    gardien_id: gardienId,
-    animal, nom_animal: nomAnimal,
-    date_debut: debut, date_fin: fin,
-    message
-  });
-  if (error) throw error;
-}
-
-let currentUser = null;
-let currentProfile = null;
-
-// Check session on load
-window.addEventListener('load', async () => {
-  const { data: { session } } = await sb.auth.getSession();
-  if (session) {
-    currentUser = session.user;
-    currentProfile = await getProfile(session.user.id);
-  }
-});
-</script></head>
+</head>
 <body>
 
 <!-- LANDING -->
@@ -257,7 +199,7 @@ window.addEventListener('load', async () => {
   <div style="font-size:56px;margin-bottom:8px">🐾</div>
   <h1 class="display">Pati<span>Patte</span></h1>
   <div class="tagline">🔐 Plateforme 100% certifiée · GPS · Live · Journal</div>
-  <p>La première plateforme de garde d'animaux avec vérification<br>d'identité, casier judiciaire et formation bien-être animal.</p>
+  <p>La première plateforme de garde d'animaux avec vérification<br>d'identité, casier judiciaire, formation et assurance RC Pro.</p>
   <div class="role-grid">
     <div class="role-card owner" onclick="enterAs('owner')">
       <div class="emoji">❤️</div>
@@ -276,7 +218,7 @@ window.addEventListener('load', async () => {
     <div class="trust-item"><div class="icon">🪪</div><div class="label">ID vérifiée</div></div>
     <div class="trust-item"><div class="icon">⚖️</div><div class="label">Casier B3</div></div>
     <div class="trust-item"><div class="icon">🎓</div><div class="label">Formés</div></div>
-    
+    <div class="trust-item"><div class="icon">🛡️</div><div class="label">Assurés</div></div>
   </div>
 </div>
 
@@ -286,7 +228,7 @@ window.addEventListener('load', async () => {
     <div class="nav-logo display">Pati<span>Patte</span> 🐾</div>
     <div class="nav-right">
       <span class="badge-role badge-owner">❤️ Propriétaire</span>
-      <button class="btn-ghost" onclick="goHome()">Changer</button>
+      <button class="btn-ghost" onclick="openModal('auth-modal')">Mon compte</button><button class="btn-ghost" onclick="goHome()">Changer</button>
     </div>
   </nav>
   <div class="main">
@@ -295,12 +237,12 @@ window.addEventListener('load', async () => {
 
     <!-- Trust explanation -->
     <div style="background:var(--card);border-radius:16px;padding:16px 20px;margin-bottom:20px;border:1px solid var(--border)">
-      <div style="font-size:13px;font-weight:800;color:var(--bark);margin-bottom:10px">🔐 Notre système de confiance en 3 niveaux</div>
+      <div style="font-size:13px;font-weight:800;color:var(--bark);margin-bottom:10px">🔐 Notre système de confiance en 4 niveaux</div>
       <div style="display:flex;flex-wrap:wrap;gap:8px">
         <div style="display:flex;align-items:center;gap:6px;background:#EBF2FD;border:1px solid rgba(59,125,216,0.2);border-radius:10px;padding:6px 12px"><span>🪪</span><div><div style="font-size:11px;font-weight:700;color:#3B7DD8">Identité vérifiée</div><div style="font-size:9px;color:var(--muted)">Carte d'identité + selfie</div></div></div>
         <div style="display:flex;align-items:center;gap:6px;background:var(--sage-soft);border:1px solid rgba(74,140,92,0.2);border-radius:10px;padding:6px 12px"><span>⚖️</span><div><div style="font-size:11px;font-weight:700;color:var(--sage)">Casier vierge</div><div style="font-size:9px;color:var(--muted)">Extrait B3 vérifié</div></div></div>
         <div style="display:flex;align-items:center;gap:6px;background:var(--gold-soft);border:1px solid rgba(232,160,32,0.2);border-radius:10px;padding:6px 12px"><span>🎓</span><div><div style="font-size:11px;font-weight:700;color:var(--gold)">Formation</div><div style="font-size:9px;color:var(--muted)">Bien-être animal certifié</div></div></div>
-
+        <div style="display:flex;align-items:center;gap:6px;background:var(--terra-soft);border:1px solid rgba(212,112,74,0.2);border-radius:10px;padding:6px 12px"><span>🛡️</span><div><div style="font-size:11px;font-weight:700;color:var(--terra)">Assuré RC Pro</div><div style="font-size:9px;color:var(--muted)">Responsabilité civile active</div></div></div>
       </div>
     </div>
 
@@ -328,7 +270,7 @@ window.addEventListener('load', async () => {
     <div class="nav-logo display">Pati<span>Patte</span> 🐾</div>
     <div class="nav-right">
       <span class="badge-role badge-sitter">🏠 Gardien</span>
-      <button class="btn-ghost" onclick="goHome()">Changer</button>
+      <button class="btn-ghost" onclick="openModal('auth-modal')">Mon compte</button><button class="btn-ghost" onclick="goHome()">Changer</button>
     </div>
   </nav>
   <div class="main">
@@ -344,7 +286,7 @@ window.addEventListener('load', async () => {
       <div style="text-align:center;margin-bottom:28px">
         <div style="font-size:48px;margin-bottom:8px">🔐</div>
         <h3 class="display" style="font-size:24px;color:var(--bark);margin-bottom:6px">Devenez un gardien certifié</h3>
-        <p style="color:var(--muted);font-size:14px">3 étapes pour inspirer confiance à tous les propriétaires</p>
+        <p style="color:var(--muted);font-size:14px">4 étapes pour inspirer confiance à tous les propriétaires</p>
       </div>
       <div class="progress-bar" id="progress-bar">
         <div class="progress-seg active" id="seg-0"></div>
@@ -401,10 +343,10 @@ const TRUST_LEVELS = [
 ];
 
 const GARDIENS = [
-  { id:1, nom:'Sophie M.',  initials:'SM', color:'#D4704A', ville:'Paris 11e', note:4.9, avis:47, animaux:['🐶','🐱'], tarif:25, dispo:true,  trust:['identity','casier','formation'], bio:'Passionnée d\'animaux depuis l\'enfance. Grand appartement avec jardin privatif. Je traite vos compagnons comme les miens.', gps:true,  camera:true,  journal:true },
-  { id:2, nom:'Marc D.',    initials:'MD', color:'#4A8C5C', ville:'Paris 14e', note:4.7, avis:32, animaux:['🐶'],       tarif:30, dispo:true,  trust:['identity','casier'],             bio:'Ancien éducateur canin, gardes avec éducation incluse. Vos chiens seront choyés et stimulés.', gps:true,  camera:false, journal:true },
-  { id:3, nom:'Lucie B.',   initials:'LB', color:'#3B7DD8', ville:'Vincennes', note:5.0, avis:18, animaux:['🐱','🐰'], tarif:20, dispo:false, trust:['identity','casier','formation'], bio:'Vétérinaire assistante, soins et amour garantis. Je prends soin de vos petits compagnons avec toute mon expertise.', gps:false, camera:false, journal:true },
-  { id:4, nom:'Tom R.',     initials:'TR', color:'#7A6A5A', ville:'Boulogne',  note:4.8, avis:61, animaux:['🐶','🐱'], tarif:22, dispo:true,  trust:['identity'],                      bio:'Grand jardin, maison à la campagne à 15 min de Paris. Vos animaux profiteront de l\'espace et de la nature.', gps:true,  camera:false, journal:true },
+  { id:1, nom:'Sophie M.',  initials:'SM', color:'#D4704A', ville:'Paris 11e', note:4.9, avis:47, animaux:['🐶','🐱'], tarif:25, dispo:true,  trust:['identity','casier','formation','assurance'], bio:'Passionnée d\'animaux depuis l\'enfance. Grand appartement avec jardin privatif. Je traite vos compagnons comme les miens.', gps:true,  camera:true,  journal:true },
+  { id:2, nom:'Marc D.',    initials:'MD', color:'#4A8C5C', ville:'Paris 14e', note:4.7, avis:32, animaux:['🐶'],       tarif:30, dispo:true,  trust:['identity','casier','assurance'],             bio:'Ancien éducateur canin, gardes avec éducation incluse. Vos chiens seront choyés et stimulés.', gps:true,  camera:false, journal:true },
+  { id:3, nom:'Lucie B.',   initials:'LB', color:'#3B7DD8', ville:'Vincennes', note:5.0, avis:18, animaux:['🐱','🐰'], tarif:20, dispo:false, trust:['identity','casier','formation','assurance'], bio:'Vétérinaire assistante, soins et amour garantis. Je prends soin de vos petits compagnons avec toute mon expertise.', gps:false, camera:false, journal:true },
+  { id:4, nom:'Tom R.',     initials:'TR', color:'#7A6A5A', ville:'Boulogne',  note:4.8, avis:61, animaux:['🐶','🐱'], tarif:22, dispo:true,  trust:['identity','assurance'],                      bio:'Grand jardin, maison à la campagne à 15 min de Paris. Vos animaux profiteront de l\'espace et de la nature.', gps:true,  camera:false, journal:true },
 ];
 
 const RESERVATIONS = [
@@ -417,7 +359,7 @@ const VERIF_STEPS = [
   { key:'identity',  title:'Vérification d\'identité',   sub:'Carte d\'identité + selfie en temps réel',          cta:'Lancer',   icon:'🪪', duration:3000 },
   { key:'casier',    title:'Casier judiciaire',           sub:'Connexion au registre national',                    cta:'Soumettre',icon:'⚖️', duration:4000 },
   { key:'formation', title:'Formation bien-être animal',  sub:'Module certifiant (30 min)',                         cta:'Commencer',icon:'🎓', duration:2500 },
-
+  { key:'assurance', title:'Assurance RC Pro',            sub:'Téléchargez votre attestation',                     cta:'Vérifier', icon:'🛡️', duration:3500 },
 ];
 
 // ── STATE ─────────────────────────────────────────────────────────────────────
@@ -732,107 +674,125 @@ document.querySelectorAll('.modal-overlay').forEach(el => {
 });
 </script>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+// Init Supabase after page loads
+let sb = null;
+let currentUser = null;
+let currentProfile = null;
+
+window.addEventListener('DOMContentLoaded', () => {
+  try {
+    sb = window.supabase.createClient(
+      'https://vhiexugzcwfnxyujmuah.supabase.co',
+      'sb_publishable_ORg7VY3lEDTwYDly4Q_ywQ_J74P4r7g'
+    );
+    checkSession();
+  } catch(e) { console.log('Supabase init error:', e); }
+});
+
+async function checkSession() {
+  if (!sb) return;
+  const { data: { session } } = await sb.auth.getSession();
+  if (session) {
+    currentUser = session.user;
+    const { data } = await sb.from('profiles').select('*').eq('id', session.user.id).single();
+    currentProfile = data;
+  }
+}
+
+async function sbSignUp(email, password, role, nom) {
+  const { data, error } = await sb.auth.signUp({ email, password });
+  if (error) throw error;
+  await sb.from('profiles').insert({ id: data.user.id, role, nom, email });
+  return data;
+}
+
+async function sbSignIn(email, password) {
+  const { data, error } = await sb.auth.signInWithPassword({ email, password });
+  if (error) throw error;
+  currentUser = data.user;
+  const { data: profile } = await sb.from('profiles').select('*').eq('id', data.user.id).single();
+  currentProfile = profile;
+  return data;
+}
+
+async function sbSignOut() {
+  await sb.auth.signOut();
+  currentUser = null;
+  currentProfile = null;
+  goHome();
+}
+</script>
+
 <!-- AUTH MODAL -->
 <div class="modal-overlay" id="auth-modal">
   <div class="modal" style="max-width:420px">
     <button class="modal-close" onclick="closeModal('auth-modal')">✕</button>
-    <div id="auth-content">
-      <h2 class="display" style="margin-bottom:4px">Connexion</h2>
-      <p style="color:var(--muted);font-size:13px;margin-bottom:20px">Connectez-vous ou créez un compte</p>
-      <div style="display:flex;gap:4px;background:var(--bg);border-radius:10px;padding:4px;margin-bottom:20px">
-        <button onclick="showAuthTab('login')" id="tab-login" style="flex:1;padding:8px;border:none;border-radius:8px;cursor:pointer;background:white;font-family:Nunito,sans-serif;font-weight:700;font-size:13px">Connexion</button>
-        <button onclick="showAuthTab('register')" id="tab-register" style="flex:1;padding:8px;border:none;border-radius:8px;cursor:pointer;background:transparent;color:#9A8878;font-family:Nunito,sans-serif;font-size:13px">Inscription</button>
+    <h2 class="display" style="margin-bottom:20px">Mon compte</h2>
+    <div style="display:flex;gap:4px;background:var(--bg);border-radius:10px;padding:4px;margin-bottom:20px">
+      <button onclick="showTab('login')" id="tab-login" style="flex:1;padding:8px;border:none;border-radius:8px;cursor:pointer;font-family:Nunito,sans-serif;font-weight:700;font-size:13px;background:white">Connexion</button>
+      <button onclick="showTab('register')" id="tab-register" style="flex:1;padding:8px;border:none;border-radius:8px;cursor:pointer;font-family:Nunito,sans-serif;font-size:13px;background:transparent;color:#9A8878">Inscription</button>
+    </div>
+    <div id="login-form">
+      <div class="form-group"><label class="form-label">Email</label><input class="form-input" id="l-email" type="email" placeholder="vous@email.com"></div>
+      <div class="form-group"><label class="form-label">Mot de passe</label><input class="form-input" id="l-pass" type="password" placeholder="••••••••"></div>
+      <p id="l-err" style="color:#ef4444;font-size:12px;margin-bottom:10px;display:none"></p>
+      <button class="btn-primary" onclick="doLogin()">Se connecter →</button>
+    </div>
+    <div id="register-form" style="display:none">
+      <div style="display:flex;gap:10px;margin-bottom:14px">
+        <button onclick="setRole('proprietaire')" id="r-prop" style="flex:1;padding:12px;border:1.5px solid #EAE0D5;border-radius:10px;cursor:pointer;background:transparent;font-family:Nunito,sans-serif;font-size:13px">❤️ Propriétaire</button>
+        <button onclick="setRole('gardien')" id="r-gard" style="flex:1;padding:12px;border:1.5px solid #EAE0D5;border-radius:10px;cursor:pointer;background:transparent;font-family:Nunito,sans-serif;font-size:13px">🏠 Gardien</button>
       </div>
-
-      <div id="login-form">
-        <div class="form-group"><label class="form-label">Email</label><input class="form-input" id="login-email" type="email" placeholder="vous@email.com"></div>
-        <div class="form-group"><label class="form-label">Mot de passe</label><input class="form-input" id="login-password" type="password" placeholder="••••••••"></div>
-        <div id="login-error" style="color:#ef4444;font-size:12px;margin-bottom:10px;display:none"></div>
-        <button class="btn-primary" onclick="handleLogin()">Se connecter →</button>
-      </div>
-
-      <div id="register-form" style="display:none">
-        <div style="display:flex;gap:10px;margin-bottom:14px">
-          <button onclick="setRegisterRole('proprietaire')" id="role-prop" style="flex:1;padding:12px;border:1.5px solid var(--border);border-radius:10px;cursor:pointer;background:transparent;font-family:Nunito,sans-serif;font-size:13px">❤️ Propriétaire</button>
-          <button onclick="setRegisterRole('gardien')" id="role-gard" style="flex:1;padding:12px;border:1.5px solid var(--border);border-radius:10px;cursor:pointer;background:transparent;font-family:Nunito,sans-serif;font-size:13px">🏠 Gardien</button>
-        </div>
-        <div class="form-group"><label class="form-label">Nom complet</label><input class="form-input" id="reg-nom" placeholder="Prénom Nom"></div>
-        <div class="form-group"><label class="form-label">Email</label><input class="form-input" id="reg-email" type="email" placeholder="vous@email.com"></div>
-        <div class="form-group"><label class="form-label">Mot de passe</label><input class="form-input" id="reg-password" type="password" placeholder="8 caractères minimum"></div>
-        <div id="reg-error" style="color:#ef4444;font-size:12px;margin-bottom:10px;display:none"></div>
-        <button class="btn-primary" onclick="handleRegister()">Créer mon compte →</button>
-      </div>
+      <div class="form-group"><label class="form-label">Nom</label><input class="form-input" id="r-nom" placeholder="Prénom Nom"></div>
+      <div class="form-group"><label class="form-label">Email</label><input class="form-input" id="r-email" type="email" placeholder="vous@email.com"></div>
+      <div class="form-group"><label class="form-label">Mot de passe</label><input class="form-input" id="r-pass" type="password" placeholder="8 caractères minimum"></div>
+      <p id="r-err" style="color:#ef4444;font-size:12px;margin-bottom:10px;display:none"></p>
+      <button class="btn-primary" onclick="doRegister()">Créer mon compte →</button>
     </div>
   </div>
 </div>
 
 <script>
-let registerRole = '';
+let regRole = '';
 
-function showAuthTab(tab) {
-  document.getElementById('login-form').style.display = tab === 'login' ? 'block' : 'none';
-  document.getElementById('register-form').style.display = tab === 'register' ? 'block' : 'none';
-  document.getElementById('tab-login').style.background = tab === 'login' ? 'white' : 'transparent';
-  document.getElementById('tab-register').style.background = tab === 'register' ? 'white' : 'transparent';
-  document.getElementById('tab-login').style.color = tab === 'login' ? '#1E1208' : '#9A8878';
-  document.getElementById('tab-register').style.color = tab === 'register' ? '#1E1208' : '#9A8878';
+function showTab(t) {
+  document.getElementById('login-form').style.display = t==='login'?'block':'none';
+  document.getElementById('register-form').style.display = t==='register'?'block':'none';
+  document.getElementById('tab-login').style.background = t==='login'?'white':'transparent';
+  document.getElementById('tab-login').style.color = t==='login'?'#1E1208':'#9A8878';
+  document.getElementById('tab-register').style.background = t==='register'?'white':'transparent';
+  document.getElementById('tab-register').style.color = t==='register'?'#1E1208':'#9A8878';
 }
 
-function setRegisterRole(role) {
-  registerRole = role;
-  document.getElementById('role-prop').style.borderColor = role === 'proprietaire' ? '#D4704A' : '#EAE0D5';
-  document.getElementById('role-prop').style.background = role === 'proprietaire' ? '#FDF0EB' : 'transparent';
-  document.getElementById('role-gard').style.borderColor = role === 'gardien' ? '#4A8C5C' : '#EAE0D5';
-  document.getElementById('role-gard').style.background = role === 'gardien' ? '#EBF5EE' : 'transparent';
+function setRole(r) {
+  regRole = r;
+  document.getElementById('r-prop').style.borderColor = r==='proprietaire'?'#D4704A':'#EAE0D5';
+  document.getElementById('r-prop').style.background = r==='proprietaire'?'#FDF0EB':'transparent';
+  document.getElementById('r-gard').style.borderColor = r==='gardien'?'#4A8C5C':'#EAE0D5';
+  document.getElementById('r-gard').style.background = r==='gardien'?'#EBF5EE':'transparent';
 }
 
-async function handleLogin() {
-  const email = document.getElementById('login-email').value;
-  const password = document.getElementById('login-password').value;
-  const errEl = document.getElementById('login-error');
-  errEl.style.display = 'none';
+async function doLogin() {
+  const e = document.getElementById('l-err');
+  e.style.display = 'none';
   try {
-    const data = await signIn(email, password);
-    currentUser = data.user;
-    currentProfile = await getProfile(data.user.id);
+    await sbSignIn(document.getElementById('l-email').value, document.getElementById('l-pass').value);
     closeModal('auth-modal');
-    updateNavForUser();
-    alert('Bienvenue ' + (currentProfile?.nom || '') + ' !');
-  } catch(e) {
-    errEl.textContent = 'Email ou mot de passe incorrect';
-    errEl.style.display = 'block';
-  }
+    alert('Bienvenue ' + (currentProfile?.nom||'') + ' !');
+  } catch(err) { e.textContent = 'Email ou mot de passe incorrect'; e.style.display = 'block'; }
 }
 
-async function handleRegister() {
-  const nom = document.getElementById('reg-nom').value;
-  const email = document.getElementById('reg-email').value;
-  const password = document.getElementById('reg-password').value;
-  const errEl = document.getElementById('reg-error');
-  errEl.style.display = 'none';
-  if (!registerRole) { errEl.textContent = 'Choisissez votre profil'; errEl.style.display = 'block'; return; }
+async function doRegister() {
+  const e = document.getElementById('r-err');
+  e.style.display = 'none';
+  if (!regRole) { e.textContent = 'Choisissez votre profil'; e.style.display = 'block'; return; }
   try {
-    await signUp(email, password, registerRole, nom);
+    await sbSignUp(document.getElementById('r-email').value, document.getElementById('r-pass').value, regRole, document.getElementById('r-nom').value);
     closeModal('auth-modal');
-    alert('Compte créé ! Vérifiez votre email pour confirmer.');
-  } catch(e) {
-    errEl.textContent = e.message || 'Erreur lors de la création';
-    errEl.style.display = 'block';
-  }
-}
-
-function updateNavForUser() {
-  const navRight = document.querySelector('.nav-right');
-  if (!navRight) return;
-  if (currentUser && currentProfile) {
-    const btn = navRight.querySelector('.btn-ghost');
-    if (btn) btn.textContent = 'Déconnexion';
-    if (btn) btn.onclick = signOut;
-  }
-}
-
-function openAuthModal() {
-  openModal('auth-modal');
+    alert('Compte créé ! Vérifiez votre email pour confirmer votre inscription.');
+  } catch(err) { e.textContent = err.message||'Erreur'; e.style.display = 'block'; }
 }
 </script>
 </body>
