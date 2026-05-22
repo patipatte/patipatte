@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PatiPatte 🐾 — Garde d'animaux certifiée</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@700;900&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #F7F3EE; --card: #fff; --bark: #1E1208; --earth: #5C3D2E;
+    --terra: #D4704A; --terra-soft: #FDF0EB; --sage: #4A8C5C; --sage-soft: #EBF5EE;
+    --sky: #3B7DD8; --sky-soft: #EBF2FD; --gold: #E8A020; --gold-soft: #FEF6E4;
+    --border: #EAE0D5; --muted: #9A8878;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Nunito', sans-serif; background: var(--bg); color: var(--bark); }
+  .display { font-family: 'Fraunces', serif; }
+
+  /* ── PAGES ── */
+  .page { display: none; }
+  .page.active { display: block; }
+
+  /* ── LANDING ── */
+  #landing { min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 24px; text-align: center; }
+  #landing h1 { font-size: clamp(48px, 8vw, 72px); font-weight: 900; color: var(--bark); margin-bottom: 8px; }
+  #landing h1 span { color: var(--terra); }
+  .tagline { font-size: 14px; font-weight: 700; color: var(--sage); background: var(--sage-soft); padding: 5px 14px; border-radius: 20px; display: inline-block; margin-bottom: 16px; }
+  #landing p { color: var(--earth); font-size: 15px; margin-bottom: 40px; line-height: 1.7; }
+  .role-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; max-width: 500px; margin: 0 auto 40px; }
+  .role-card { background: var(--card); border: 2px solid var(--border); border-radius: 20px; padding: 28px 20px; cursor: pointer; text-align: center; transition: all 0.2s; }
+  .role-card:hover { transform: translateY(-2px); box-shadow: 0 12px 40px rgba(0,0,0,0.08); }
+  .role-card.owner:hover { border-color: var(--terra); }
+  .role-card.sitter:hover { border-color: var(--sage); }
+  .role-card .emoji { font-size: 40px; margin-bottom: 12px; }
+  .role-card h3 { font-size: 15px; font-weight: 800; color: var(--bark); margin-bottom: 6px; }
+  .role-card p { font-size: 12px; color: var(--muted); line-height: 1.5; }
+  .role-card .cta { margin-top: 16px; display: inline-block; padding: 7px 16px; border-radius: 8px; font-size: 12px; font-weight: 700; color: #fff; }
+  .role-card.owner .cta { background: var(--terra); }
+  .role-card.sitter .cta { background: var(--sage); }
+  .trust-bar { display: flex; justify-content: center; gap: 24px; }
+  .trust-item { text-align: center; }
+  .trust-item .icon { font-size: 20px; }
+  .trust-item .label { font-size: 10px; font-weight: 700; color: var(--sage); }
+
+  /* ── NAV ── */
+  nav { background: var(--card); border-bottom: 1px solid var(--border); padding: 0 28px; display: flex; justify-content: space-between; align-items: center; height: 58px; position: sticky; top: 0; z-index: 50; }
+  .nav-logo { font-size: 22px; font-weight: 900; color: var(--bark); }
+  .nav-logo span { color: var(--terra); }
+  .nav-right { display: flex; align-items: center; gap: 10px; }
+  .badge-role { font-size: 11px; font-weight: 700; padding: 4px 12px; border-radius: 20px; }
+  .badge-owner { background: var(--terra-soft); color: var(--terra); }
+  .badge-sitter { background: var(--sage-soft); color: var(--sage); }
+  .btn-ghost { background: none; border: 1px solid var(--border); color: var(--muted); padding: 6px 14px; border-radius: 8px; cursor: pointer; font-size: 12px; font-family: 'Nunito', sans-serif; }
+
+  /* ── MAIN CONTENT ── */
+  .main { max-width: 900px; margin: 0 auto; padding: 32px 22px; }
+  h2.section-title { font-size: 26px; font-weight: 900; color: var(--bark); margin-bottom: 4px; }
+  p.section-sub { color: var(--muted); font-size: 14px; margin-bottom: 28px; }
+
+  /* ── TABS ── */
+  .tabs { display: flex; gap: 4px; background: var(--card); border-radius: 12px; padding: 4px; width: fit-content; margin-bottom: 28px; flex-wrap: wrap; }
+  .tab { padding: 8px 18px; border-radius: 9px; border: none; cursor: pointer; font-size: 13px; font-family: 'Nunito', sans-serif; font-weight: 600; background: transparent; color: var(--muted); transition: all 0.15s; }
+  .tab.active { background: var(--bg); color: var(--bark); font-weight: 800; }
+
+  /* ── FILTERS ── */
+  .filter-row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 12px; }
+  .filter-label { font-size: 12px; color: var(--muted); min-width: 60px; }
+  .pill { padding: 7px 15px; border-radius: 24px; border: 1px solid var(--border); background: transparent; color: var(--muted); cursor: pointer; font-size: 12px; font-family: 'Nunito', sans-serif; font-weight: 600; transition: all 0.15s; }
+  .pill.active { border-color: var(--terra); background: var(--terra-soft); color: var(--terra); }
+  .pill.sage.active { border-color: var(--sage); background: var(--sage-soft); color: var(--sage); }
+
+  /* ── CARDS ── */
+  .card { background: var(--card); border-radius: 16px; padding: 22px; border: 1.5px solid var(--border); margin-bottom: 12px; transition: border-color 0.2s; cursor: pointer; }
+  .card:hover { border-color: var(--terra); }
+  .card-header { display: flex; gap: 14px; align-items: flex-start; margin-bottom: 12px; }
+  .avatar { width: 52px; height: 52px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 17px; font-weight: 800; color: #fff; flex-shrink: 0; }
+  .card-info { flex: 1; }
+  .card-info h3 { font-size: 16px; font-weight: 800; color: var(--bark); margin-bottom: 2px; }
+  .card-info .sub { font-size: 12px; color: var(--muted); margin-bottom: 4px; }
+  .stars { color: #F5A623; font-size: 12px; letter-spacing: 1px; }
+  .card-price { text-align: right; }
+  .card-price .price { font-size: 18px; font-weight: 900; color: var(--terra); }
+  .card-price .unit { font-size: 10px; color: var(--muted); }
+  .dispo-dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 4px; }
+  .dispo-dot.on { background: var(--sage); }
+  .dispo-dot.off { background: #ccc; }
+
+  /* ── TRUST BAR ── */
+  .trust-row { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+  .trust-pct { font-size: 11px; font-weight: 700; color: var(--sage); }
+  .trust-track { flex: 1; height: 5px; background: var(--border); border-radius: 4px; overflow: hidden; }
+  .trust-fill { height: 100%; border-radius: 4px; background: linear-gradient(90deg, var(--sky), var(--sage)); }
+  .trust-icons { display: flex; gap: 6px; }
+  .trust-icon { font-size: 14px; }
+  .trust-icon.off { opacity: 0.2; }
+
+  /* ── FEATURES ── */
+  .features { display: flex; gap: 6px; flex-wrap: wrap; }
+  .feature-tag { font-size: 11px; font-weight: 700; padding: 3px 9px; border-radius: 20px; }
+
+  /* ── MODAL ── */
+  .modal-overlay { position: fixed; inset: 0; background: rgba(30,18,8,0.55); z-index: 100; display: none; align-items: center; justify-content: center; padding: 20px; }
+  .modal-overlay.open { display: flex; }
+  .modal { background: var(--bg); border-radius: 24px; max-width: 560px; width: 100%; max-height: 90vh; overflow-y: auto; padding: 32px; position: relative; }
+  .modal-close { position: absolute; top: 16px; right: 20px; background: none; border: none; font-size: 22px; cursor: pointer; color: var(--muted); }
+  .modal h2 { font-size: 24px; font-weight: 900; color: var(--bark); margin-bottom: 4px; }
+  .modal .sub { color: var(--muted); font-size: 13px; margin-bottom: 20px; }
+  .detail-section { margin-bottom: 20px; }
+  .detail-section h4 { font-size: 10px; letter-spacing: 0.12em; color: var(--muted); text-transform: uppercase; margin-bottom: 10px; }
+  .trust-badges { display: flex; flex-wrap: wrap; gap: 8px; }
+  .trust-badge { display: flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 10px; border: 1px solid; }
+  .trust-badge.on { opacity: 1; }
+  .trust-badge.off { opacity: 0.35; }
+  .trust-badge span.label { font-size: 11px; font-weight: 700; }
+  .trust-badge span.desc { font-size: 9px; color: var(--muted); display: block; }
+
+  /* ── FORM ── */
+  .form-group { margin-bottom: 14px; }
+  .form-label { font-size: 10px; letter-spacing: 0.1em; color: var(--muted); text-transform: uppercase; display: block; margin-bottom: 6px; }
+  .form-input { width: 100%; background: var(--card); border: 1.5px solid var(--border); border-radius: 10px; padding: 11px 14px; color: var(--bark); font-size: 13px; font-family: 'Nunito', sans-serif; outline: none; }
+  .form-input:focus { border-color: var(--terra); }
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .btn-primary { background: var(--terra); color: #fff; border: none; border-radius: 12px; padding: 12px 24px; font-size: 14px; font-weight: 800; font-family: 'Nunito', sans-serif; cursor: pointer; transition: opacity 0.15s; width: 100%; }
+  .btn-primary:hover { opacity: 0.9; }
+  .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; }
+  .btn-sage { background: var(--sage); color: #fff; border: none; border-radius: 10px; padding: 8px 18px; font-size: 13px; font-weight: 700; font-family: 'Nunito', sans-serif; cursor: pointer; }
+  .animal-grid { display: flex; gap: 8px; flex-wrap: wrap; }
+  .animal-btn { font-size: 22px; padding: 8px 14px; border-radius: 10px; border: 1.5px solid var(--border); background: transparent; cursor: pointer; transition: all 0.15s; }
+  .animal-btn.active { border-color: var(--terra); background: var(--terra-soft); }
+  .recap-box { background: var(--sage-soft); border-radius: 10px; padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; margin: 12px 0; }
+  .recap-box .nights { font-size: 13px; color: var(--sage); }
+  .recap-box .total { font-size: 18px; font-weight: 900; color: var(--sage); }
+  .btn-row { display: flex; gap: 10px; margin-top: 16px; }
+  .btn-row .btn-primary { flex: 2; }
+  .success-box { text-align: center; padding: 20px 0; }
+  .success-box .emoji { font-size: 56px; margin-bottom: 12px; }
+  .success-box h2 { font-size: 26px; font-weight: 900; color: var(--bark); margin-bottom: 8px; }
+  .success-box p { color: var(--muted); font-size: 14px; line-height: 1.7; margin-bottom: 20px; }
+  .recap-list { background: var(--bg); border-radius: 12px; padding: 14px 18px; text-align: left; margin-bottom: 16px; }
+  .recap-row { display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px solid var(--border); font-size: 13px; }
+  .recap-row .k { color: var(--muted); }
+  .recap-row .v { font-weight: 700; color: var(--bark); }
+
+  /* ── VERIFICATION ── */
+  .verif-step { background: var(--card); border-radius: 16px; padding: 20px 22px; border: 1.5px solid var(--border); margin-bottom: 12px; transition: all 0.3s; }
+  .verif-step.active { border-color: var(--terra); }
+  .verif-step.done { border-color: var(--sage); }
+  .verif-step.locked { opacity: 0.5; }
+  .verif-header { display: flex; justify-content: space-between; align-items: center; }
+  .verif-left { display: flex; gap: 14px; align-items: center; }
+  .verif-icon-wrap { width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0; }
+  .verif-icon-wrap.active { background: var(--terra-soft); }
+  .verif-icon-wrap.done { background: var(--sage-soft); }
+  .verif-icon-wrap.pending { background: var(--bg); }
+  .verif-text h4 { font-size: 14px; font-weight: 800; color: var(--bark); }
+  .verif-text p { font-size: 12px; color: var(--muted); }
+  .btn-small { padding: 7px 16px; border-radius: 8px; border: none; cursor: pointer; font-size: 12px; font-weight: 700; font-family: 'Nunito', sans-serif; }
+  .progress-bar { display: flex; gap: 4px; margin-bottom: 28px; }
+  .progress-seg { flex: 1; height: 4px; border-radius: 4px; background: var(--border); transition: background 0.4s; }
+  .progress-seg.done { background: var(--sage); }
+  .progress-seg.active { background: var(--terra); }
+
+  /* ── DASHBOARD ── */
+  .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 24px; }
+  .stat-card { background: var(--card); border-radius: 14px; padding: 18px; border: 1px solid var(--border); text-align: center; }
+  .stat-card .stat-icon { font-size: 24px; margin-bottom: 4px; }
+  .stat-card .stat-val { font-size: 22px; font-weight: 900; color: var(--bark); }
+  .stat-card .stat-label { font-size: 11px; color: var(--muted); }
+  .reserv-card { background: var(--card); border-radius: 16px; padding: 20px 22px; border: 1.5px solid var(--border); margin-bottom: 10px; }
+  .reserv-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; }
+  .reserv-name { font-size: 15px; font-weight: 800; color: var(--bark); }
+  .reserv-sub { font-size: 13px; color: var(--muted); }
+  .reserv-amount { font-size: 20px; font-weight: 900; color: var(--terra); }
+  .status-badge { font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 20px; }
+  .status-pending { background: #FEF3EC; color: var(--terra); }
+  .status-confirmed { background: var(--sage-soft); color: var(--sage); }
+  .action-btns { display: flex; gap: 8px; margin-top: 10px; }
+  .btn-accept { background: var(--sage); color: #fff; border: none; border-radius: 8px; padding: 7px 16px; cursor: pointer; font-size: 12px; font-weight: 700; font-family: 'Nunito', sans-serif; }
+  .btn-refuse { background: none; border: 1px solid var(--border); color: var(--muted); border-radius: 8px; padding: 7px 16px; cursor: pointer; font-size: 12px; font-family: 'Nunito', sans-serif; }
+  .certified-banner { background: var(--sage-soft); border-radius: 16px; padding: 16px 20px; margin-bottom: 24px; border: 1px solid rgba(74,140,92,0.3); display: flex; align-items: center; gap: 12px; }
+  .certified-banner .medal { font-size: 32px; }
+  .certified-banner h3 { font-size: 16px; font-weight: 800; color: var(--sage); }
+  .certified-banner p { font-size: 12px; color: var(--muted); }
+  .empty { text-align: center; padding: 40px; color: var(--muted); font-size: 14px; }
+  .spinner { display: inline-block; width: 16px; height: 16px; border: 2px solid var(--border); border-top-color: var(--terra); border-radius: 50%; animation: spin 0.7s linear infinite; vertical-align: middle; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  @media (max-width: 600px) {
+    .role-grid { grid-template-columns: 1fr; }
+    .form-grid { grid-template-columns: 1fr; }
+    .stats-grid { grid-template-columns: repeat(3, 1fr); }
+  }
+</style>
+</head>
+<body>
+
+<!-- LANDING -->
+<div id="landing" class="page active">
+  <div style="font-size:56px;margin-bottom:8px">🐾</div>
+  <h1 class="display">Pati<span>Patte</span></h1>
+  <div class="tagline">🔐 Plateforme 100% certifiée · GPS · Live · Journal</div>
+  <p>La première plateforme de garde d'animaux avec vérification<br>d'identité, casier judiciaire et formation bien-être animal.</p>
+  <div class="role-grid">
+    <div class="role-card owner" onclick="enterAs('owner')">
+      <div class="emoji">❤️</div>
+      <h3>Je cherche un gardien</h3>
+      <p>Trouvez un gardien certifié avec suivi GPS, caméra live et journal quotidien</p>
+      <div class="cta">Trouver un gardien →</div>
+    </div>
+    <div class="role-card sitter" onclick="enterAs('sitter')">
+      <div class="emoji">🏠</div>
+      <h3>Je garde des animaux</h3>
+      <p>Certifiez votre profil et proposez vos services en toute confiance</p>
+      <div class="cta">Proposer mes services →</div>
+    </div>
+  </div>
+  <div class="trust-bar">
+    <div class="trust-item"><div class="icon">🪪</div><div class="label">ID vérifiée</div></div>
+    <div class="trust-item"><div class="icon">⚖️</div><div class="label">Casier B3</div></div>
+    <div class="trust-item"><div class="icon">🎓</div><div class="label">Formés</div></div>
+    
+  </div>
+</div>
+
+<!-- OWNER VIEW -->
+<div id="owner-view" class="page">
+  <nav>
+    <div class="nav-logo display">Pati<span>Patte</span> 🐾</div>
+    <div class="nav-right">
+      <span class="badge-role badge-owner">❤️ Propriétaire</span>
+      <button class="btn-ghost" onclick="goHome()">Changer</button>
+    </div>
+  </nav>
+  <div class="main">
+    <h2 class="section-title display">Trouvez votre gardien certifié</h2>
+    <p class="section-sub">4 gardiens disponibles près de chez vous</p>
+
+    <!-- Trust explanation -->
+    <div style="background:var(--card);border-radius:16px;padding:16px 20px;margin-bottom:20px;border:1px solid var(--border)">
+      <div style="font-size:13px;font-weight:800;color:var(--bark);margin-bottom:10px">🔐 Notre système de confiance en 3 niveaux</div>
+      <div style="display:flex;flex-wrap:wrap;gap:8px">
+        <div style="display:flex;align-items:center;gap:6px;background:#EBF2FD;border:1px solid rgba(59,125,216,0.2);border-radius:10px;padding:6px 12px"><span>🪪</span><div><div style="font-size:11px;font-weight:700;color:#3B7DD8">Identité vérifiée</div><div style="font-size:9px;color:var(--muted)">Carte d'identité + selfie</div></div></div>
+        <div style="display:flex;align-items:center;gap:6px;background:var(--sage-soft);border:1px solid rgba(74,140,92,0.2);border-radius:10px;padding:6px 12px"><span>⚖️</span><div><div style="font-size:11px;font-weight:700;color:var(--sage)">Casier vierge</div><div style="font-size:9px;color:var(--muted)">Extrait B3 vérifié</div></div></div>
+        <div style="display:flex;align-items:center;gap:6px;background:var(--gold-soft);border:1px solid rgba(232,160,32,0.2);border-radius:10px;padding:6px 12px"><span>🎓</span><div><div style="font-size:11px;font-weight:700;color:var(--gold)">Formation</div><div style="font-size:9px;color:var(--muted)">Bien-être animal certifié</div></div></div>
+
+      </div>
+    </div>
+
+    <!-- Filters -->
+    <div class="filter-row">
+      <span class="filter-label">Animal :</span>
+      <button class="pill" onclick="toggleAnimal(this,'🐶')">🐶 Chien</button>
+      <button class="pill" onclick="toggleAnimal(this,'🐱')">🐱 Chat</button>
+      <button class="pill" onclick="toggleAnimal(this,'🐰')">🐰 Lapin</button>
+    </div>
+    <div class="filter-row" style="margin-bottom:20px">
+      <button class="pill sage" id="cert-filter" onclick="toggleCert()">✅ 100% certifiés seulement</button>
+    </div>
+
+    <p style="font-size:12px;color:var(--muted);margin-bottom:16px" id="count-label">4 gardiens</p>
+
+    <!-- Gardien cards -->
+    <div id="gardiens-list"></div>
+  </div>
+</div>
+
+<!-- SITTER VIEW -->
+<div id="sitter-view" class="page">
+  <nav>
+    <div class="nav-logo display">Pati<span>Patte</span> 🐾</div>
+    <div class="nav-right">
+      <span class="badge-role badge-sitter">🏠 Gardien</span>
+      <button class="btn-ghost" onclick="goHome()">Changer</button>
+    </div>
+  </nav>
+  <div class="main">
+    <h2 class="section-title display">🏠 Espace Gardien</h2>
+    <p class="section-sub">Certifiez votre profil et gérez vos réservations</p>
+
+    <div class="tabs">
+      <button class="tab active" onclick="switchTab('verif', this)">🔐 Certification</button>
+      <button class="tab" onclick="switchTab('dashboard', this)">📊 Mon espace</button>
+    </div>
+
+    <div id="verif-tab">
+      <div style="text-align:center;margin-bottom:28px">
+        <div style="font-size:48px;margin-bottom:8px">🔐</div>
+        <h3 class="display" style="font-size:24px;color:var(--bark);margin-bottom:6px">Devenez un gardien certifié</h3>
+        <p style="color:var(--muted);font-size:14px">3 étapes pour inspirer confiance à tous les propriétaires</p>
+      </div>
+      <div class="progress-bar" id="progress-bar">
+        <div class="progress-seg active" id="seg-0"></div>
+        <div class="progress-seg" id="seg-1"></div>
+        <div class="progress-seg" id="seg-2"></div>
+        <div class="progress-seg" id="seg-3"></div>
+      </div>
+      <div id="verif-steps"></div>
+      <div id="certified-success" style="display:none;background:var(--sage-soft);border-radius:16px;padding:24px;text-align:center;border:1px solid rgba(74,140,92,0.3)">
+        <div style="font-size:40px;margin-bottom:8px">🎉</div>
+        <div class="display" style="font-size:20px;color:var(--sage);font-weight:700">Profil 100% certifié !</div>
+        <div style="color:var(--muted);font-size:13px;margin-top:4px">Vous apparaissez maintenant en priorité dans les recherches</div>
+      </div>
+    </div>
+
+    <div id="dashboard-tab" style="display:none">
+      <div id="cert-banner" style="display:none" class="certified-banner">
+        <div class="medal">🏅</div>
+        <div><h3>Profil 100% certifié !</h3><p>Vous gagnez 3x plus de réservations.</p></div>
+      </div>
+      <div class="stats-grid">
+        <div class="stat-card"><div class="stat-icon">📅</div><div class="stat-val">3</div><div class="stat-label">Réservations</div></div>
+        <div class="stat-card"><div class="stat-icon">💰</div><div class="stat-val">175€</div><div class="stat-label">Revenus</div></div>
+        <div class="stat-card"><div class="stat-icon">⭐</div><div class="stat-val">4.9</div><div class="stat-label">Note</div></div>
+      </div>
+      <div id="reservations-list"></div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL GARDIEN -->
+<div class="modal-overlay" id="gardien-modal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('gardien-modal')">✕</button>
+    <div id="modal-content"></div>
+  </div>
+</div>
+
+<!-- MODAL RESERVATION -->
+<div class="modal-overlay" id="resa-modal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('resa-modal')">✕</button>
+    <div id="resa-content"></div>
+  </div>
+</div>
+
+<script>
+// ── DATA ──────────────────────────────────────────────────────────────────────
+const TRUST_LEVELS = [
+  { key:'identity', label:'Identité vérifiée', icon:'🪪', color:'#3B7DD8', desc:'Carte d\'identité + selfie' },
+  { key:'casier',   label:'Casier vierge',     icon:'⚖️', color:'#4A8C5C', desc:'Extrait B3 vérifié' },
+  { key:'formation',label:'Formation',         icon:'🎓', color:'#E8A020', desc:'Bien-être animal certifié' },
+  { key:'assurance',label:'Assuré RC Pro',     icon:'🛡️', color:'#D4704A', desc:'Responsabilité civile' },
+];
+
+const GARDIENS = [
+  { id:1, nom:'Sophie M.',  initials:'SM', color:'#D4704A', ville:'Paris 11e', note:4.9, avis:47, animaux:['🐶','🐱'], tarif:25, dispo:true,  trust:['identity','casier','formation'], bio:'Passionnée d\'animaux depuis l\'enfance. Grand appartement avec jardin privatif. Je traite vos compagnons comme les miens.', gps:true,  camera:true,  journal:true },
+  { id:2, nom:'Marc D.',    initials:'MD', color:'#4A8C5C', ville:'Paris 14e', note:4.7, avis:32, animaux:['🐶'],       tarif:30, dispo:true,  trust:['identity','casier'],             bio:'Ancien éducateur canin, gardes avec éducation incluse. Vos chiens seront choyés et stimulés.', gps:true,  camera:false, journal:true },
+  { id:3, nom:'Lucie B.',   initials:'LB', color:'#3B7DD8', ville:'Vincennes', note:5.0, avis:18, animaux:['🐱','🐰'], tarif:20, dispo:false, trust:['identity','casier','formation'], bio:'Vétérinaire assistante, soins et amour garantis. Je prends soin de vos petits compagnons avec toute mon expertise.', gps:false, camera:false, journal:true },
+  { id:4, nom:'Tom R.',     initials:'TR', color:'#7A6A5A', ville:'Boulogne',  note:4.8, avis:61, animaux:['🐶','🐱'], tarif:22, dispo:true,  trust:['identity'],                      bio:'Grand jardin, maison à la campagne à 15 min de Paris. Vos animaux profiteront de l\'espace et de la nature.', gps:true,  camera:false, journal:true },
+];
+
+const RESERVATIONS = [
+  { id:1, nom:'Alice K.',   animal:'🐶 Chien · Rocket', dates:'15–18 Jan 2027', nuits:3, montant:75,  status:'pending',   msg:'Il mange 2x par jour, croquettes dans le sac.' },
+  { id:2, nom:'Julien M.',  animal:'🐱 Chat · Mochi',   dates:'20–22 Jan 2027', nuits:2, montant:50,  status:'confirmed', msg:'Chat très calme, aime les câlins.' },
+  { id:3, nom:'Sara B.',    animal:'🐶 Chien · Buddy',  dates:'5–10 Fév 2027',  nuits:5, montant:125, status:'confirmed', msg:'' },
+];
+
+const VERIF_STEPS = [
+  { key:'identity',  title:'Vérification d\'identité',   sub:'Carte d\'identité + selfie en temps réel',          cta:'Lancer',   icon:'🪪', duration:3000 },
+  { key:'casier',    title:'Casier judiciaire',           sub:'Connexion au registre national',                    cta:'Soumettre',icon:'⚖️', duration:4000 },
+  { key:'formation', title:'Formation bien-être animal',  sub:'Module certifiant (30 min)',                         cta:'Commencer',icon:'🎓', duration:2500 },
+
+];
+
+// ── STATE ─────────────────────────────────────────────────────────────────────
+let currentRole = null;
+let animalFilter = '';
+let certFilter = false;
+let verifStep = 0;
+let verifStatus = {};
+let certified = false;
+let reservations = [...RESERVATIONS];
+let selectedGardien = null;
+
+// ── NAVIGATION ────────────────────────────────────────────────────────────────
+function showPage(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+function enterAs(role) {
+  currentRole = role;
+  if (role === 'owner') { renderGardiens(); showPage('owner-view'); }
+  else { renderVerifSteps(); renderReservations(); showPage('sitter-view'); }
+}
+
+function goHome() { showPage('landing'); }
+
+function switchTab(tab, btn) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('verif-tab').style.display = tab === 'verif' ? 'block' : 'none';
+  document.getElementById('dashboard-tab').style.display = tab === 'dashboard' ? 'block' : 'none';
+  if (tab === 'dashboard') { if (certified) document.getElementById('cert-banner').style.display = 'flex'; }
+}
+
+// ── FILTERS ───────────────────────────────────────────────────────────────────
+function toggleAnimal(btn, animal) {
+  document.querySelectorAll('.filter-row .pill:not(.sage)').forEach(p => p.classList.remove('active'));
+  if (animalFilter === animal) { animalFilter = ''; }
+  else { animalFilter = animal; btn.classList.add('active'); }
+  renderGardiens();
+}
+
+function toggleCert() {
+  certFilter = !certFilter;
+  document.getElementById('cert-filter').classList.toggle('active', certFilter);
+  renderGardiens();
+}
+
+// ── RENDER GARDIENS ───────────────────────────────────────────────────────────
+function renderGardiens() {
+  let list = GARDIENS.filter(g => {
+    if (animalFilter && !g.animaux.includes(animalFilter)) return false;
+    if (certFilter && g.trust.length < 4) return false;
+    return true;
+  });
+  document.getElementById('count-label').textContent = list.length + ' gardien' + (list.length > 1 ? 's' : '');
+  const el = document.getElementById('gardiens-list');
+  if (!list.length) { el.innerHTML = '<div class="empty">Aucun gardien ne correspond à vos critères.</div>'; return; }
+  el.innerHTML = list.map(g => {
+    const pct = Math.round(g.trust.length / 4 * 100);
+    const color = pct === 100 ? '#4A8C5C' : pct >= 75 ? '#3B7DD8' : '#E8A020';
+    const trustIcons = TRUST_LEVELS.map(t => `<span class="trust-icon ${g.trust.includes(t.key)?'':'off'}" title="${t.desc}">${t.icon}</span>`).join('');
+    return `
+    <div class="card" onclick="openGardien(${g.id})">
+      <div class="card-header">
+        <div class="avatar" style="background:${g.color}">${g.initials}</div>
+        <div class="card-info">
+          <h3>${g.nom} ${!g.dispo?'<span style="font-size:11px;color:var(--muted)">(Indisponible)</span>':''}</h3>
+          <div class="sub">📍 ${g.ville}</div>
+          <div class="stars">${'★'.repeat(Math.round(g.note))}${'☆'.repeat(5-Math.round(g.note))}<span style="color:var(--muted);font-size:11px;margin-left:4px">${g.note} (${g.avis})</span></div>
+        </div>
+        <div class="card-price">
+          <div class="price">${g.tarif}€</div>
+          <div class="unit">par nuit</div>
+          <div style="margin-top:6px;font-size:11px;color:${g.dispo?'#4A8C5C':'#ccc'}"><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:${g.dispo?'#4A8C5C':'#ccc'};margin-right:3px"></span>${g.dispo?'Dispo':'Indisponible'}</div>
+        </div>
+      </div>
+      <div class="trust-row">
+        <span class="trust-pct" style="color:${color}">${pct===100?'✅ 100% CERTIFIÉ':'🔐 '+pct+'%'}</span>
+        <div class="trust-track"><div class="trust-fill" style="width:${pct}%;background:linear-gradient(90deg,${color},${color})"></div></div>
+      </div>
+      <div class="trust-icons" style="margin-bottom:10px">${trustIcons}</div>
+      <div class="features">
+        ${g.gps?'<span class="feature-tag" style="background:var(--sage-soft);color:var(--sage)">📍 GPS</span>':''}
+        ${g.camera?'<span class="feature-tag" style="background:var(--sky-soft);color:var(--sky)">📷 Caméra</span>':''}
+        ${g.journal?'<span class="feature-tag" style="background:var(--gold-soft);color:var(--gold)">📓 Journal</span>':''}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ── MODAL GARDIEN ─────────────────────────────────────────────────────────────
+function openGardien(id) {
+  selectedGardien = GARDIENS.find(g => g.id === id);
+  const g = selectedGardien;
+  const pct = Math.round(g.trust.length / 4 * 100);
+  const badges = TRUST_LEVELS.map(t => {
+    const on = g.trust.includes(t.key);
+    return `<div class="trust-badge ${on?'on':'off'}" style="border-color:${t.color}40;background:${t.color}10">
+      <span>${t.icon}</span><div><span class="label" style="color:${t.color}">${t.label}</span><span class="desc">${t.desc}</span></div>
+    </div>`;
+  }).join('');
+  document.getElementById('modal-content').innerHTML = `
+    <div style="display:flex;gap:16px;align-items:flex-start;margin-bottom:20px">
+      <div class="avatar" style="width:72px;height:72px;font-size:24px;background:${g.color}">${g.initials}</div>
+      <div style="flex:1">
+        <h2 class="display">${g.nom}</h2>
+        <div class="sub">📍 ${g.ville} · ${g.tarif}€/nuit</div>
+        <div class="stars">${'★'.repeat(Math.round(g.note))} <strong>${g.note}</strong> <span style="color:var(--muted);font-size:12px">(${g.avis} avis)</span></div>
+      </div>
+    </div>
+    <div class="trust-badges" style="margin-bottom:20px">${badges}</div>
+    <div class="detail-section"><h4>À propos</h4><p style="color:var(--earth);font-size:13px;line-height:1.8">${g.bio}</p></div>
+    <div class="detail-section"><h4>Animaux acceptés</h4><div style="font-size:28px">${g.animaux.join(' ')}</div></div>
+    <div class="detail-section"><h4>Fonctionnalités</h4>
+      <div class="features">
+        ${g.gps?'<span class="feature-tag" style="background:var(--sage-soft);color:var(--sage)">📍 Suivi GPS</span>':''}
+        ${g.camera?'<span class="feature-tag" style="background:var(--sky-soft);color:var(--sky)">📷 Caméra live</span>':''}
+        ${g.journal?'<span class="feature-tag" style="background:var(--gold-soft);color:var(--gold)">📓 Journal quotidien</span>':''}
+      </div>
+    </div>
+    <div style="display:flex;gap:10px;margin-top:20px">
+      <button class="btn-ghost" style="flex:1" onclick="closeModal('gardien-modal')">Retour</button>
+      <button class="btn-primary" style="flex:2;${!g.dispo?'opacity:0.4;cursor:not-allowed':''}" onclick="${g.dispo?'openResa()':''}">${g.dispo?'Réserver →':'Indisponible'}</button>
+    </div>
+  `;
+  openModal('gardien-modal');
+}
+
+// ── MODAL RESERVATION ─────────────────────────────────────────────────────────
+function openResa() {
+  closeModal('gardien-modal');
+  const g = selectedGardien;
+  document.getElementById('resa-content').innerHTML = `
+    <h2 class="display" style="margin-bottom:4px">Réserver · ${g.nom}</h2>
+    <div style="color:var(--muted);font-size:13px;margin-bottom:20px">${g.tarif}€/nuit</div>
+    <div class="form-group">
+      <label class="form-label">Type d'animal</label>
+      <div class="animal-grid" id="animal-select">
+        ${g.animaux.map(a => `<button class="animal-btn" onclick="selectAnimalResa(this,'${a}')">${a}</button>`).join('')}
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Prénom de votre animal</label>
+      <input class="form-input" id="pet-name" placeholder="Luna, Max…" oninput="updateResa()">
+    </div>
+    <div class="form-grid">
+      <div class="form-group">
+        <label class="form-label">Date d'arrivée</label>
+        <input class="form-input" id="date-start" type="date" oninput="updateResa()">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Date de départ</label>
+        <input class="form-input" id="date-end" type="date" oninput="updateResa()">
+      </div>
+    </div>
+    <div id="price-recap" style="display:none" class="recap-box">
+      <span class="nights" id="nights-label"></span>
+      <span class="total" id="total-label"></span>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Message (optionnel)</label>
+      <textarea class="form-input" id="resa-msg" rows="3" placeholder="Habitudes, allergies, informations importantes…"></textarea>
+    </div>
+    <div class="btn-row">
+      <button class="btn-ghost" onclick="closeModal('resa-modal')">Annuler</button>
+      <button class="btn-primary" id="confirm-btn" onclick="confirmResa()" disabled>Confirmer la demande →</button>
+    </div>
+  `;
+  openModal('resa-modal');
+}
+
+let selectedAnimalResa = '';
+function selectAnimalResa(btn, animal) {
+  document.querySelectorAll('.animal-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  selectedAnimalResa = animal;
+  updateResa();
+}
+
+function updateResa() {
+  const start = document.getElementById('date-start')?.value;
+  const end = document.getElementById('date-end')?.value;
+  const name = document.getElementById('pet-name')?.value;
+  const g = selectedGardien;
+  let nights = 0;
+  if (start && end) {
+    nights = Math.max(0, Math.round((new Date(end) - new Date(start)) / 86400000));
+    if (nights > 0) {
+      document.getElementById('price-recap').style.display = 'flex';
+      document.getElementById('nights-label').textContent = nights + ' nuit' + (nights>1?'s':'') + ' × ' + g.tarif + '€';
+      document.getElementById('total-label').textContent = (nights * g.tarif) + '€';
+    }
+  }
+  const ready = selectedAnimalResa && name && nights > 0;
+  document.getElementById('confirm-btn').disabled = !ready;
+}
+
+function confirmResa() {
+  const g = selectedGardien;
+  const start = document.getElementById('date-start').value;
+  const end = document.getElementById('date-end').value;
+  const name = document.getElementById('pet-name').value;
+  const nights = Math.round((new Date(end) - new Date(start)) / 86400000);
+  document.getElementById('resa-content').innerHTML = `
+    <div class="success-box">
+      <div class="emoji">🎉</div>
+      <h2 class="display">Demande envoyée !</h2>
+      <p>${g.nom} vous répondra sous 24h.<br>Vous recevrez une confirmation par email.</p>
+      <div class="recap-list">
+        ${[['Gardien',g.nom],['Animal',selectedAnimalResa+' '+name],['Dates',start+' → '+end],['Nuits',nights],['Total estimé',(nights*g.tarif)+'€']].map(([k,v])=>`<div class="recap-row"><span class="k">${k}</span><span class="v">${v}</span></div>`).join('')}
+      </div>
+      <div style="background:var(--sage-soft);border-radius:10px;padding:12px;display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-bottom:16px">
+        ${g.trust.map(k => { const t=TRUST_LEVELS.find(x=>x.key===k); return t?`<span style="font-size:12px;color:var(--sage)">${t.icon} ${t.label}</span>`:''; }).join('')}
+      </div>
+      <button class="btn-primary" onclick="closeModal('resa-modal')">Fermer</button>
+    </div>
+  `;
+}
+
+// ── VERIFICATION ──────────────────────────────────────────────────────────────
+function renderVerifSteps() {
+  const el = document.getElementById('verif-steps');
+  el.innerHTML = VERIF_STEPS.map((s, i) => {
+    const done = verifStatus[s.key] === 'done';
+    const pending = verifStatus[s.key] === 'pending';
+    const active = i === verifStep && !done;
+    const locked = i > verifStep && !done;
+    let stateClass = locked ? 'locked' : done ? 'done' : active ? 'active' : '';
+    let iconClass = done ? 'done' : pending ? 'pending' : active ? 'active' : 'pending';
+    let rightHtml = '';
+    if (done) rightHtml = '<span style="font-size:12px;color:var(--sage);font-weight:700">✓ Validé</span>';
+    else if (pending) rightHtml = '<span style="font-size:12px;color:var(--terra)"><span class="spinner"></span> Vérification…</span>';
+    else if (active) rightHtml = `<button class="btn-small btn-sage" onclick="startVerif('${s.key}',${s.duration})">${s.cta}</button>`;
+    return `<div class="verif-step ${stateClass}" id="step-${s.key}">
+      <div class="verif-header">
+        <div class="verif-left">
+          <div class="verif-icon-wrap ${iconClass}">${done?'✅':s.icon}</div>
+          <div class="verif-text"><h4>${s.title}</h4><p>${s.sub}</p></div>
+        </div>
+        ${rightHtml}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function startVerif(key, duration) {
+  verifStatus[key] = 'pending';
+  renderVerifSteps();
+  setTimeout(() => {
+    verifStatus[key] = 'done';
+    if (verifStep < VERIF_STEPS.length - 1) verifStep++;
+    // Update progress bar
+    VERIF_STEPS.forEach((s, i) => {
+      const seg = document.getElementById('seg-'+i);
+      if (verifStatus[s.key] === 'done') seg.className = 'progress-seg done';
+      else if (i === verifStep) seg.className = 'progress-seg active';
+      else seg.className = 'progress-seg';
+    });
+    const allDone = VERIF_STEPS.every(s => verifStatus[s.key] === 'done');
+    if (allDone) {
+      certified = true;
+      document.getElementById('certified-success').style.display = 'block';
+    }
+    renderVerifSteps();
+  }, duration);
+}
+
+// ── RESERVATIONS ──────────────────────────────────────────────────────────────
+function renderReservations() {
+  const el = document.getElementById('reservations-list');
+  if (!reservations.length) { el.innerHTML = '<div class="empty">Aucune réservation pour le moment.</div>'; return; }
+  el.innerHTML = reservations.map(r => `
+    <div class="reserv-card" id="reserv-${r.id}">
+      <div class="reserv-header">
+        <div>
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:2px">
+            <span class="reserv-name">${r.nom}</span>
+            <span class="status-badge ${r.status==='pending'?'status-pending':'status-confirmed'}">${r.status==='pending'?'EN ATTENTE':'CONFIRMÉE'}</span>
+          </div>
+          <div class="reserv-sub">${r.animal} · ${r.dates}</div>
+        </div>
+        <div style="text-align:right">
+          <div class="reserv-amount">${r.montant}€</div>
+          <div style="font-size:11px;color:var(--muted)">${r.nuits} nuits</div>
+        </div>
+      </div>
+      ${r.msg?`<div style="background:var(--bg);border-radius:8px;padding:8px 12px;font-size:12px;color:var(--earth);font-style:italic;margin-bottom:10px">"${r.msg}"</div>`:''}
+      ${r.status==='pending'?`<div class="action-btns">
+        <button class="btn-refuse" onclick="refuseResa(${r.id})">Refuser</button>
+        <button class="btn-accept" onclick="acceptResa(${r.id})">✓ Accepter</button>
+      </div>`:''}
+    </div>
+  `).join('');
+}
+
+function acceptResa(id) {
+  reservations = reservations.map(r => r.id===id?{...r,status:'confirmed'}:r);
+  renderReservations();
+}
+function refuseResa(id) {
+  reservations = reservations.filter(r => r.id!==id);
+  renderReservations();
+}
+
+// ── MODAL UTILS ───────────────────────────────────────────────────────────────
+function openModal(id) { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+document.querySelectorAll('.modal-overlay').forEach(el => {
+  el.addEventListener('click', e => { if (e.target === el) closeModal(el.id); });
+});
+</script>
+</body>
+</html>
