@@ -7,107 +7,177 @@
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@700;900&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'Nunito',sans-serif;background:#F7F3EE;color:#1E1208}
+body{font-family:'Nunito',sans-serif;color:#000000;background:#E8F5E9}
 .display{font-family:'Fraunces',serif}
 .page{display:none}.page.active{display:block}
-nav{background:#fff;border-bottom:1px solid #EAE0D5;padding:0 24px;display:flex;justify-content:space-between;align-items:center;height:58px;position:sticky;top:0;z-index:50}
-.logo{font-size:22px;font-weight:900;color:#1E1208}.logo span{color:#D4704A}
-.btn{padding:10px 20px;border-radius:12px;border:none;cursor:pointer;font-family:'Nunito',sans-serif;font-weight:700;font-size:13px;transition:all 0.15s}
-.btn-primary{background:#D4704A;color:#fff}
-.btn-ghost{background:transparent;border:1px solid #EAE0D5;color:#9A8878}
+#pg-home{min-height:100vh;position:relative;overflow:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;text-align:center}
+.hero-bg{position:absolute;inset:0;z-index:0;display:grid;grid-template-columns:repeat(4,1fr);grid-template-rows:repeat(3,1fr);opacity:0.18;filter:blur(2px);transform:scale(1.05)}
+.hero-bg img{width:100%;height:100%;object-fit:cover}
+.hero-overlay{position:absolute;inset:0;z-index:1;background:linear-gradient(135deg,rgba(232,245,233,0.93),rgba(232,245,233,0.87))}
+.hero-content{position:relative;z-index:2;max-width:540px;margin:0 auto}
+.float-a{position:absolute;font-size:32px;animation:floatUp linear infinite;opacity:0.12;pointer-events:none;z-index:1}
+@keyframes floatUp{0%{transform:translateY(100vh);opacity:0}10%{opacity:0.12}90%{opacity:0.12}100%{transform:translateY(-120px);opacity:0}}
+nav{background:rgba(255,255,255,0.97);backdrop-filter:blur(10px);border-bottom:1px solid #C8E6C9;padding:0 20px;display:flex;justify-content:space-between;align-items:center;height:58px;position:sticky;top:0;z-index:50}
+.logo{font-size:21px;font-weight:900;color:#000000}.logo span{color:#FF6B00}
+.btn{padding:9px 18px;border-radius:10px;border:none;cursor:pointer;font-family:'Nunito',sans-serif;font-weight:700;font-size:13px;transition:all 0.15s}
+.btn-primary{background:#FF6B00;color:#fff}.btn-primary:hover{background:#E55A00}
+.btn-ghost{background:transparent;border:1px solid #C8E6C9;color:#9A8878}
 .btn-sage{background:#4A8C5C;color:#fff}
-.card{background:#fff;border-radius:16px;padding:20px;border:1.5px solid #EAE0D5;margin-bottom:12px;cursor:pointer;transition:border-color 0.2s}
-.card:hover{border-color:#D4704A}
+.card{background:#fff;border-radius:14px;padding:18px;border:1.5px solid #C8E6C9;margin-bottom:10px;cursor:pointer;transition:all 0.2s}
+.card:hover{border-color:#FF6B00;box-shadow:0 4px 16px rgba(212,112,74,0.1)}
 .modal-bg{position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:100;display:none;align-items:center;justify-content:center;padding:16px}
 .modal-bg.open{display:flex}
-.modal{background:#F7F3EE;border-radius:20px;padding:28px;width:100%;max-width:480px;max-height:90vh;overflow-y:auto;position:relative}
-.close-btn{position:absolute;top:14px;right:18px;background:none;border:none;font-size:20px;cursor:pointer;color:#9A8878}
-label{display:block;font-size:11px;letter-spacing:0.1em;color:#9A8878;text-transform:uppercase;margin-bottom:5px}
-input,textarea{width:100%;background:#fff;border:1.5px solid #EAE0D5;border-radius:10px;padding:10px 14px;font-size:13px;font-family:'Nunito',sans-serif;color:#1E1208;outline:none;box-sizing:border-box}
-input:focus,textarea:focus{border-color:#D4704A}
-.form-group{margin-bottom:14px}
+.modal{background:#E8F5E9;border-radius:18px;padding:24px;width:100%;max-width:480px;max-height:90vh;overflow-y:auto;position:relative}
+.close-btn{position:absolute;top:12px;right:16px;background:none;border:none;font-size:20px;cursor:pointer;color:#9A8878}
+label{display:block;font-size:10px;letter-spacing:0.1em;color:#9A8878;text-transform:uppercase;margin-bottom:5px}
+input,textarea,select{width:100%;background:#fff;border:1.5px solid #C8E6C9;border-radius:9px;padding:9px 12px;font-size:13px;font-family:'Nunito',sans-serif;color:#000000;outline:none;box-sizing:border-box}
+input:focus,textarea:focus,select:focus{border-color:#FF6B00}
+.fg{margin-bottom:12px}
 .err{color:#ef4444;font-size:12px;margin-bottom:8px;display:none}
-.tag{background:#EAE0D5;color:#5C3D2E;font-size:11px;padding:3px 9px;border-radius:20px;display:inline-block;margin:2px}
+.tag{background:#EAE0D5;color:#1a1a1a;font-size:11px;padding:3px 9px;border-radius:20px;display:inline-block;margin:2px}
+.spin{display:inline-block;width:18px;height:18px;border:2px solid #EAE0D5;border-top-color:#FF6B00;border-radius:50%;animation:spin 0.7s linear infinite;vertical-align:middle}
+@keyframes spin{to{transform:rotate(360deg)}}
+.inner{background:#E8F5E9;min-height:100vh}
 </style>
 </head>
 <body>
 
 <!-- ACCUEIL -->
-<div id="pg-home" class="page active" style="min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;text-align:center">
-  <div style="font-size:52px;margin-bottom:8px">🐾</div>
-  <h1 class="display" style="font-size:clamp(42px,8vw,64px);font-weight:900;margin-bottom:8px">Pati<span style="color:#D4704A">Patte</span></h1>
-  <div style="background:#EBF5EE;color:#4A8C5C;font-size:13px;font-weight:700;padding:5px 14px;border-radius:20px;margin-bottom:14px">🔐 Identité vérifiée · Casier judiciaire · Formation</div>
-  <p style="color:#5C3D2E;font-size:15px;margin-bottom:36px;line-height:1.7;max-width:480px">La première plateforme de garde d'animaux avec vérification complète de tous les gardiens.</p>
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;max-width:460px;width:100%;margin-bottom:32px">
-    <div onclick="goTo('pg-owner')" style="background:#fff;border:2px solid #EAE0D5;border-radius:18px;padding:24px 16px;cursor:pointer" onmouseover="this.style.borderColor='#D4704A';this.style.boxShadow='0 8px 24px rgba(212,112,74,0.15)'" onmouseout="this.style.borderColor='#EAE0D5';this.style.boxShadow='none'">
-      <div style="font-size:36px;margin-bottom:10px">❤️</div>
-      <div style="font-weight:800;font-size:15px;margin-bottom:6px">Je cherche un gardien</div>
-      <div style="font-size:12px;color:#9A8878;line-height:1.5;margin-bottom:14px">Trouvez un gardien certifié près de chez vous</div>
-      <div style="background:#D4704A;color:#fff;border-radius:8px;padding:7px 14px;font-size:12px;font-weight:700;display:inline-block">Trouver →</div>
-    </div>
-    <div onclick="goTo('pg-sitter')" style="background:#fff;border:2px solid #EAE0D5;border-radius:18px;padding:24px 16px;cursor:pointer" onmouseover="this.style.borderColor='#4A8C5C';this.style.boxShadow='0 8px 24px rgba(74,140,92,0.15)'" onmouseout="this.style.borderColor='#EAE0D5';this.style.boxShadow='none'">
-      <div style="font-size:36px;margin-bottom:10px">🏠</div>
-      <div style="font-weight:800;font-size:15px;margin-bottom:6px">Je garde des animaux</div>
-      <div style="font-size:12px;color:#9A8878;line-height:1.5;margin-bottom:14px">Proposez vos services en toute confiance</div>
-      <div style="background:#4A8C5C;color:#fff;border-radius:8px;padding:7px 14px;font-size:12px;font-weight:700;display:inline-block">S'inscrire →</div>
-    </div>
+<div id="pg-home" class="page active">
+  <div class="hero-bg">
+    <img src="https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=400&q=80" alt="">
+    <img src="https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=400&q=80" alt="">
+    <img src="https://images.unsplash.com/photo-1552053831-71594a27632d?w=400&q=80" alt="">
+    <img src="https://images.unsplash.com/photo-1561948955-570b270e7c36?w=400&q=80" alt="">
+    <img src="https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?w=400&q=80" alt="">
+    <img src="https://images.unsplash.com/photo-1573865526739-10659fec78a5?w=400&q=80" alt="">
+    <img src="https://images.unsplash.com/photo-1596854407944-bf87f6fdd49e?w=400&q=80" alt="">
+    <img src="https://images.unsplash.com/photo-1543466835-00a7907e9de1?w=400&q=80" alt="">
+    <img src="https://images.unsplash.com/photo-1574158622682-e40e69881006?w=400&q=80" alt="">
+    <img src="https://images.unsplash.com/photo-1548681528-6a5c45b66063?w=400&q=80" alt="">
+    <img src="https://images.unsplash.com/photo-1592194996308-7b43878e84a6?w=400&q=80" alt="">
+    <img src="https://images.unsplash.com/photo-1512813195386-6cf811ad3542?w=400&q=80" alt="">
   </div>
-  <div style="display:flex;gap:24px">
-    <div style="text-align:center"><div>🪪</div><div style="font-size:10px;font-weight:700;color:#4A8C5C">ID vérifiée</div></div>
-    <div style="text-align:center"><div>⚖️</div><div style="font-size:10px;font-weight:700;color:#4A8C5C">Casier B3</div></div>
-    <div style="text-align:center"><div>🎓</div><div style="font-size:10px;font-weight:700;color:#4A8C5C">Formés</div></div>
+  <div class="hero-overlay"></div>
+  <div class="float-a" style="left:5%;animation-duration:15s">🐶</div>
+  <div class="float-a" style="left:18%;animation-duration:19s;animation-delay:3s">🐱</div>
+  <div class="float-a" style="left:32%;animation-duration:13s;animation-delay:7s">🐰</div>
+  <div class="float-a" style="left:50%;animation-duration:21s;animation-delay:1s">🐹</div>
+  <div class="float-a" style="left:65%;animation-duration:16s;animation-delay:5s">🐦</div>
+  <div class="float-a" style="left:80%;animation-duration:14s;animation-delay:9s">🐾</div>
+  <div class="hero-content">
+    <div style="font-size:54px;margin-bottom:8px">🐾</div>
+    <h1 class="display" style="font-size:clamp(42px,8vw,66px);font-weight:900;margin-bottom:8px">Pati<span style="color:#FF6B00">Patte</span></h1>
+    <div style="background:rgba(235,245,238,0.95);color:#4A8C5C;font-size:12px;font-weight:700;padding:6px 16px;border-radius:20px;display:inline-block;margin-bottom:14px">🔐 Identité vérifiée · Formation bien-être animal</div>
+    <p style="color:#1a1a1a;font-size:15px;margin-bottom:32px;line-height:1.7">La garde d'animaux avec des gardiens vérifiés et certifiés. Vos compagnons méritent le meilleur !</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:28px">
+      <div onclick="goTo('pg-owner')" style="background:rgba(255,255,255,0.93);border:2px solid #EAE0D5;border-radius:16px;padding:22px 14px;cursor:pointer" onmouseover="this.style.borderColor='#FF6B00';this.style.transform='translateY(-3px)'" onmouseout="this.style.borderColor='#C8E6C9';this.style.transform=''">
+        <div style="font-size:34px;margin-bottom:8px">❤️</div>
+        <div style="font-weight:800;font-size:14px;margin-bottom:5px">Je cherche un gardien</div>
+        <div style="font-size:11px;color:#9A8878;line-height:1.5;margin-bottom:12px">Trouvez un gardien certifié</div>
+        <div style="background:#FF6B00;color:#fff;border-radius:8px;padding:7px 14px;font-size:12px;font-weight:700;display:inline-block">Trouver →</div>
+      </div>
+      <div onclick="goTo('pg-sitter')" style="background:rgba(255,255,255,0.93);border:2px solid #EAE0D5;border-radius:16px;padding:22px 14px;cursor:pointer" onmouseover="this.style.borderColor='#4A8C5C';this.style.transform='translateY(-3px)'" onmouseout="this.style.borderColor='#C8E6C9';this.style.transform=''">
+        <div style="font-size:34px;margin-bottom:8px">🏠</div>
+        <div style="font-weight:800;font-size:14px;margin-bottom:5px">Je garde des animaux</div>
+        <div style="font-size:11px;color:#9A8878;line-height:1.5;margin-bottom:12px">Proposez vos services</div>
+        <div style="background:#4A8C5C;color:#fff;border-radius:8px;padding:7px 14px;font-size:12px;font-weight:700;display:inline-block">S'inscrire →</div>
+      </div>
+    </div>
+    <div style="display:flex;gap:16px;justify-content:center">
+      <div style="text-align:center;background:rgba(255,255,255,0.85);padding:8px 12px;border-radius:10px"><div>🪪</div><div style="font-size:10px;font-weight:700;color:#4A8C5C">ID vérifiée</div></div>
+      <div style="text-align:center;background:rgba(255,255,255,0.85);padding:8px 12px;border-radius:10px"><div>🎓</div><div style="font-size:10px;font-weight:700;color:#4A8C5C">Formés</div></div>
+      <div style="text-align:center;background:rgba(255,255,255,0.85);padding:8px 12px;border-radius:10px"><div>⭐</div><div style="font-size:10px;font-weight:700;color:#4A8C5C">Notés</div></div>
+    </div>
   </div>
 </div>
 
 <!-- PROPRIÉTAIRE -->
-<div id="pg-owner" class="page">
+<div id="pg-owner" class="page inner">
   <nav>
     <div class="logo display">Pati<span>Patte</span> 🐾</div>
-    <div style="display:flex;gap:8px">
-      <button class="btn btn-ghost" style="padding:7px 14px;font-size:12px" onclick="openModal('auth-modal')">👤 Mon compte</button>
-      <button class="btn btn-ghost" style="padding:7px 14px;font-size:12px" onclick="goTo('pg-home')">← Retour</button>
+    <div style="display:flex;gap:6px">
+      <button class="btn btn-ghost" style="padding:6px 12px;font-size:12px" onclick="openModal('auth-modal')">👤 Mon compte</button>
+      <button class="btn btn-ghost" style="padding:6px 12px;font-size:12px" onclick="goTo('pg-home')">← Retour</button>
     </div>
   </nav>
-  <div style="max-width:860px;margin:0 auto;padding:28px 20px">
-    <h2 class="display" style="font-size:26px;font-weight:900;margin-bottom:4px">Trouvez votre gardien certifié 🐾</h2>
-    <p style="color:#9A8878;font-size:14px;margin-bottom:20px">Tous nos gardiens sont vérifiés — identité, casier judiciaire et formation</p>
-    <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px;align-items:center">
-      <span style="font-size:12px;color:#9A8878">Animal :</span>
-      <button id="f-dog" class="btn btn-ghost" style="padding:6px 14px;font-size:12px" onclick="filterA(this,'🐶')">🐶 Chien</button>
-      <button id="f-cat" class="btn btn-ghost" style="padding:6px 14px;font-size:12px" onclick="filterA(this,'🐱')">🐱 Chat</button>
-      <button id="f-rab" class="btn btn-ghost" style="padding:6px 14px;font-size:12px" onclick="filterA(this,'🐰')">🐰 Lapin</button>
-      <button id="f-cert" class="btn btn-ghost" style="padding:6px 14px;font-size:12px;border-color:#4A8C5C;color:#4A8C5C" onclick="filterCert()">✅ Certifiés uniquement</button>
+  <div style="max-width:860px;margin:0 auto;padding:24px 16px">
+    <h2 class="display" style="font-size:24px;font-weight:900;margin-bottom:4px">Trouvez votre gardien 🐾</h2>
+    <p style="color:#9A8878;font-size:13px;margin-bottom:18px">Gardiens vérifiés — identité + formation bien-être animal</p>
+    <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:18px;align-items:center">
+      <span style="font-size:11px;color:#9A8878;font-weight:700">Animal :</span>
+      <button class="btn btn-ghost" style="padding:5px 12px;font-size:12px" onclick="fA(this,'🐶')">🐶 Chien</button>
+      <button class="btn btn-ghost" style="padding:5px 12px;font-size:12px" onclick="fA(this,'🐱')">🐱 Chat</button>
+      <button class="btn btn-ghost" style="padding:5px 12px;font-size:12px" onclick="fA(this,'🐰')">🐰 Lapin</button>
+      <button class="btn btn-ghost" style="padding:5px 12px;font-size:12px" onclick="fA(this,'🐹')">🐹 Hamster</button>
+      <button class="btn btn-ghost" style="padding:5px 12px;font-size:12px" onclick="fA(this,'🐦')">🐦 Oiseau</button>
+      <button class="btn btn-ghost" style="padding:5px 12px;font-size:12px" onclick="fA(this,'🐟')">🐟 Poisson</button>
+      <button class="btn btn-ghost" style="padding:5px 12px;font-size:12px" onclick="fA(this,'🐢')">🐢 Reptile</button>
     </div>
-    <div id="list"></div>
+    <div id="list"><div style="text-align:center;padding:40px"><div class="spin"></div><p style="color:#9A8878;margin-top:12px;font-size:13px">Chargement des gardiens…</p></div></div>
   </div>
 </div>
 
 <!-- GARDIEN -->
-<div id="pg-sitter" class="page">
+<div id="pg-sitter" class="page inner">
   <nav>
     <div class="logo display">Pati<span>Patte</span> 🐾</div>
-    <div style="display:flex;gap:8px">
-      <button class="btn btn-ghost" style="padding:7px 14px;font-size:12px" onclick="openModal('auth-modal')">👤 Mon compte</button>
-      <button class="btn btn-ghost" style="padding:7px 14px;font-size:12px" onclick="goTo('pg-home')">← Retour</button>
+    <div style="display:flex;gap:6px">
+      <button class="btn btn-ghost" style="padding:6px 12px;font-size:12px" onclick="openModal('auth-modal')">👤 Mon compte</button>
+      <button class="btn btn-ghost" style="padding:6px 12px;font-size:12px" onclick="goTo('pg-home')">← Retour</button>
     </div>
   </nav>
-  <div style="max-width:760px;margin:0 auto;padding:28px 20px">
-    <h2 class="display" style="font-size:26px;font-weight:900;margin-bottom:4px">🏠 Espace Gardien</h2>
-    <p style="color:#9A8878;font-size:14px;margin-bottom:24px">Créez votre compte et certifiez votre profil pour commencer</p>
-    <div style="background:#fff;border-radius:16px;padding:20px;margin-bottom:20px;border:1px solid #EAE0D5">
-      <div style="font-weight:800;font-size:15px;margin-bottom:4px">🔐 Certification en 3 étapes</div>
-      <p style="font-size:12px;color:#9A8878;margin-bottom:16px">Complétez votre certification pour apparaître dans les recherches</p>
-      <div id="vsteps"></div>
-      <div id="vsuccess" style="display:none;background:#EBF5EE;border-radius:12px;padding:16px;text-align:center;margin-top:12px">
-        <div style="font-size:32px;margin-bottom:6px">🎉</div>
-        <div style="font-weight:800;color:#4A8C5C;font-size:16px">Profil 100% certifié !</div>
-        <div style="font-size:12px;color:#9A8878;margin-top:4px">Vous apparaissez maintenant en priorité dans les recherches</div>
+  <div style="max-width:760px;margin:0 auto;padding:24px 16px">
+    <h2 class="display" style="font-size:24px;font-weight:900;margin-bottom:4px">🏠 Espace Gardien</h2>
+    <p style="color:#9A8878;font-size:13px;margin-bottom:20px">Créez votre compte, complétez votre profil et commencez à recevoir des réservations</p>
+
+    <!-- Étape 1 : Créer un compte -->
+    <div style="background:#fff;border-radius:14px;padding:18px;margin-bottom:14px;border:1px solid #C8E6C9">
+      <div style="font-weight:800;font-size:14px;margin-bottom:12px">① Créez votre compte gardien</div>
+      <div id="sitter-auth-zone">
+        <button class="btn btn-primary" style="width:100%" onclick="openModal('auth-modal');showTab('r');setRole('gardien')">Créer mon compte →</button>
+        <p style="text-align:center;font-size:12px;color:#9A8878;margin-top:8px">Déjà inscrit ? <span style="color:#FF6B00;cursor:pointer" onclick="openModal('auth-modal')">Se connecter</span></p>
+      </div>
+      <div id="sitter-logged" style="display:none">
+        <div style="background:#EBF5EE;border-radius:10px;padding:12px;text-align:center">
+          <div style="font-size:20px;margin-bottom:4px">✅</div>
+          <div style="font-weight:700;color:#4A8C5C;font-size:13px" id="sitter-welcome"></div>
+        </div>
       </div>
     </div>
-    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px">
-      <div style="background:#fff;border-radius:14px;padding:16px;border:1px solid #EAE0D5;text-align:center"><div>📅</div><div style="font-size:20px;font-weight:900">3</div><div style="font-size:11px;color:#9A8878">Réservations</div></div>
-      <div style="background:#fff;border-radius:14px;padding:16px;border:1px solid #EAE0D5;text-align:center"><div>💰</div><div style="font-size:20px;font-weight:900">175€</div><div style="font-size:11px;color:#9A8878">Revenus</div></div>
-      <div style="background:#fff;border-radius:14px;padding:16px;border:1px solid #EAE0D5;text-align:center"><div>⭐</div><div style="font-size:20px;font-weight:900">4.9</div><div style="font-size:11px;color:#9A8878">Note</div></div>
+
+    <!-- Étape 2 : Profil -->
+    <div style="background:#fff;border-radius:14px;padding:18px;margin-bottom:14px;border:1px solid #C8E6C9">
+      <div style="font-weight:800;font-size:14px;margin-bottom:12px">② Complétez votre profil</div>
+      <div class="fg"><label>Ville</label><input id="g-ville" placeholder="Ex: Paris 11e, Lyon, Bordeaux…"></div>
+      <div class="fg"><label>Animaux acceptés</label>
+        <div style="display:flex;flex-wrap:wrap;gap:6px" id="anim-select">
+          <button type="button" class="btn btn-ghost" style="padding:5px 12px;font-size:13px" onclick="togAnim(this,'🐶')">🐶 Chien</button>
+          <button type="button" class="btn btn-ghost" style="padding:5px 12px;font-size:13px" onclick="togAnim(this,'🐱')">🐱 Chat</button>
+          <button type="button" class="btn btn-ghost" style="padding:5px 12px;font-size:13px" onclick="togAnim(this,'🐰')">🐰 Lapin</button>
+          <button type="button" class="btn btn-ghost" style="padding:5px 12px;font-size:13px" onclick="togAnim(this,'🐹')">🐹 Hamster</button>
+          <button type="button" class="btn btn-ghost" style="padding:5px 12px;font-size:13px" onclick="togAnim(this,'🐦')">🐦 Oiseau</button>
+          <button type="button" class="btn btn-ghost" style="padding:5px 12px;font-size:13px" onclick="togAnim(this,'🐟')">🐟 Poisson</button>
+          <button type="button" class="btn btn-ghost" style="padding:5px 12px;font-size:13px" onclick="togAnim(this,'🐢')">🐢 Reptile</button>
+          <button type="button" class="btn btn-ghost" style="padding:5px 12px;font-size:13px" onclick="togAnim(this,'🐾')">🐾 Autre</button>
+        </div>
+      </div>
+      <div class="fg"><label>Tarif par nuit (€)</label><input id="g-tarif" type="number" placeholder="25" min="5" max="200"></div>
+      <div class="fg"><label>Présentation</label><textarea id="g-bio" rows="3" placeholder="Parlez de vous, de votre expérience, de votre espace…"></textarea></div>
+      <p id="prof-err" class="err"></p>
+      <button class="btn btn-primary" style="width:100%" onclick="saveProfile()">Sauvegarder mon profil →</button>
+      <div id="prof-ok" style="display:none;background:#EBF5EE;border-radius:8px;padding:10px;text-align:center;margin-top:10px;font-size:13px;color:#4A8C5C;font-weight:700">✅ Profil sauvegardé !</div>
+    </div>
+
+    <!-- Étape 3 : Certification -->
+    <div style="background:#fff;border-radius:14px;padding:18px;border:1px solid #C8E6C9">
+      <div style="font-weight:800;font-size:14px;margin-bottom:4px">③ Certification</div>
+      <p style="font-size:12px;color:#9A8878;margin-bottom:14px">2 étapes pour inspirer confiance</p>
+      <div id="vsteps"></div>
+      <div id="vsuccess" style="display:none;background:#EBF5EE;border-radius:10px;padding:14px;text-align:center;margin-top:10px">
+        <div style="font-size:28px;margin-bottom:6px">🎉</div>
+        <div style="font-weight:800;color:#4A8C5C">Profil 100% certifié !</div>
+      </div>
     </div>
   </div>
 </div>
@@ -116,45 +186,45 @@ input:focus,textarea:focus{border-color:#D4704A}
 <div class="modal-bg" id="auth-modal">
   <div class="modal">
     <button class="close-btn" onclick="closeModal('auth-modal')">✕</button>
-    <h2 class="display" style="font-size:22px;margin-bottom:16px">Mon compte</h2>
-    <div style="display:flex;gap:4px;background:#fff;border-radius:10px;padding:4px;margin-bottom:18px">
-      <button onclick="showTab('l')" id="tl" style="flex:1;padding:8px;border:none;border-radius:8px;cursor:pointer;font-family:'Nunito',sans-serif;font-weight:700;font-size:13px;background:#F7F3EE">Connexion</button>
-      <button onclick="showTab('r')" id="tr" style="flex:1;padding:8px;border:none;border-radius:8px;cursor:pointer;font-family:'Nunito',sans-serif;font-size:13px;background:transparent;color:#9A8878">Inscription</button>
+    <h2 class="display" style="font-size:21px;margin-bottom:14px">Mon compte</h2>
+    <div style="display:flex;gap:4px;background:#fff;border-radius:10px;padding:4px;margin-bottom:16px">
+      <button onclick="showTab('l')" id="tl" style="flex:1;padding:7px;border:none;border-radius:7px;cursor:pointer;font-family:'Nunito',sans-serif;font-weight:700;font-size:13px;background:#E8F5E9;color:#000000">Connexion</button>
+      <button onclick="showTab('r')" id="tr" style="flex:1;padding:7px;border:none;border-radius:7px;cursor:pointer;font-family:'Nunito',sans-serif;font-size:13px;background:transparent;color:#9A8878">Inscription</button>
     </div>
     <div id="fl">
-      <div class="form-group"><label>Email</label><input id="le" type="email" placeholder="vous@email.com"></div>
-      <div class="form-group"><label>Mot de passe</label><input id="lp" type="password" placeholder="••••••••"></div>
+      <div class="fg"><label>Email</label><input id="le" type="email" placeholder="vous@email.com"></div>
+      <div class="fg"><label>Mot de passe</label><input id="lp" type="password" placeholder="••••••••"></div>
       <p id="lerr" class="err"></p>
       <button class="btn btn-primary" style="width:100%" onclick="doLogin()">Se connecter →</button>
     </div>
     <div id="fr" style="display:none">
-      <div style="display:flex;gap:10px;margin-bottom:14px">
-        <button id="rp" onclick="setRole('proprietaire')" style="flex:1;padding:12px;border:1.5px solid #EAE0D5;border-radius:10px;cursor:pointer;background:transparent;font-family:'Nunito',sans-serif;font-size:13px;font-weight:600">❤️ Propriétaire</button>
-        <button id="rg" onclick="setRole('gardien')" style="flex:1;padding:12px;border:1.5px solid #EAE0D5;border-radius:10px;cursor:pointer;background:transparent;font-family:'Nunito',sans-serif;font-size:13px;font-weight:600">🏠 Gardien</button>
+      <div style="display:flex;gap:8px;margin-bottom:12px">
+        <button id="rp" onclick="setRole('proprietaire')" style="flex:1;padding:11px;border:1.5px solid #C8E6C9;border-radius:9px;cursor:pointer;background:transparent;font-family:'Nunito',sans-serif;font-size:13px;font-weight:600">❤️ Propriétaire</button>
+        <button id="rg" onclick="setRole('gardien')" style="flex:1;padding:11px;border:1.5px solid #C8E6C9;border-radius:9px;cursor:pointer;background:transparent;font-family:'Nunito',sans-serif;font-size:13px;font-weight:600">🏠 Gardien</button>
       </div>
-      <div class="form-group"><label>Nom complet</label><input id="rn" placeholder="Prénom Nom"></div>
-      <div class="form-group"><label>Email</label><input id="re" type="email" placeholder="vous@email.com"></div>
-      <div class="form-group"><label>Mot de passe</label><input id="rpass" type="password" placeholder="8 caractères minimum"></div>
+      <div class="fg"><label>Nom complet</label><input id="rn" placeholder="Prénom Nom"></div>
+      <div class="fg"><label>Email</label><input id="re" type="email" placeholder="vous@email.com"></div>
+      <div class="fg"><label>Mot de passe</label><input id="rpass" type="password" placeholder="8 caractères minimum"></div>
       <p id="rerr" class="err"></p>
       <button class="btn btn-primary" style="width:100%" onclick="doRegister()">Créer mon compte →</button>
     </div>
   </div>
 </div>
 
-<!-- MODAL DETAIL -->
+<!-- MODAL DETAIL GARDIEN -->
 <div class="modal-bg" id="det-modal">
   <div class="modal"><button class="close-btn" onclick="closeModal('det-modal')">✕</button><div id="det"></div></div>
 </div>
 
-<!-- MODAL RESA -->
+<!-- MODAL RESERVATION -->
 <div class="modal-bg" id="res-modal">
   <div class="modal"><button class="close-btn" onclick="closeModal('res-modal')">✕</button><div id="res"></div></div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-// ── Init ──────────────────────────────────────────────────────────────────────
 let sb, currentUser=null, currentProfile=null;
+const COLORS=['#FF6B00','#4A8C5C','#3B7DD8','#9B59B6','#E67E22','#1ABC9C','#E74C3C','#2C3E50'];
 
 window.addEventListener('DOMContentLoaded', async () => {
   try {
@@ -162,18 +232,27 @@ window.addEventListener('DOMContentLoaded', async () => {
       'https://vhiexugzcwfnxyujmuah.supabase.co',
       'sb_publishable_ORg7VY3lEDTwYDly4Q_ywQ_J74P4r7g'
     );
-    const { data:{session} } = await sb.auth.getSession();
-    if (session) { currentUser=session.user; await loadProfile(session.user.id); }
-  } catch(e) {}
-  render(); renderV();
+    const {data:{session}} = await sb.auth.getSession();
+    if (session) { currentUser=session.user; await loadProfile(session.user.id); updateSitterUI(); }
+  } catch(e) { console.log(e); }
+  loadGardiens();
+  renderV();
 });
 
 async function loadProfile(id) {
-  try { const {data}=await sb.from('profiles').select('*').eq('id',id).single(); currentProfile=data; } catch(e) {}
+  try {
+    const {data} = await sb.from('profiles').select('*').eq('id',id).single();
+    currentProfile = data;
+  } catch(e) {}
 }
 
-// ── Nav ───────────────────────────────────────────────────────────────────────
-function goTo(id) { document.querySelectorAll('.page').forEach(p=>p.classList.remove('active')); document.getElementById(id).classList.add('active'); window.scrollTo(0,0); }
+// ── Navigation ────────────────────────────────────────────────────────────────
+function goTo(id) {
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0,0);
+  if (id==='pg-owner') loadGardiens();
+}
 function openModal(id) { document.getElementById(id).classList.add('open'); }
 function closeModal(id) { document.getElementById(id).classList.remove('open'); }
 document.addEventListener('click', e=>{ if(e.target.classList.contains('modal-bg')) e.target.classList.remove('open'); });
@@ -190,178 +269,272 @@ function showTab(t) {
 }
 function setRole(r) {
   regRole=r;
-  document.getElementById('rp').style.borderColor=r==='proprietaire'?'#D4704A':'#EAE0D5';
-  document.getElementById('rp').style.background=r==='proprietaire'?'#FDF0EB':'transparent';
+  document.getElementById('rp').style.borderColor=r==='proprietaire'?'#FF6B00':'#EAE0D5';
+  document.getElementById('rp').style.background=r==='proprietaire'?'#FFF0E0':'transparent';
   document.getElementById('rg').style.borderColor=r==='gardien'?'#4A8C5C':'#EAE0D5';
   document.getElementById('rg').style.background=r==='gardien'?'#EBF5EE':'transparent';
 }
 async function doLogin() {
   const e=document.getElementById('lerr'); e.style.display='none';
   try {
-    const {data,error}=await sb.auth.signInWithPassword({email:document.getElementById('le').value,password:document.getElementById('lp').value});
+    const {data,error}=await sb.auth.signInWithPassword({
+      email:document.getElementById('le').value,
+      password:document.getElementById('lp').value
+    });
     if(error) throw error;
     currentUser=data.user; await loadProfile(data.user.id);
-    closeModal('auth-modal'); alert('Bienvenue '+(currentProfile?.nom||'')+' ! 🐾');
+    closeModal('auth-modal');
+    updateSitterUI();
+    alert('Bienvenue '+(currentProfile?.nom||'')+' ! 🐾');
+    loadGardiens();
   } catch(err){e.textContent='Email ou mot de passe incorrect';e.style.display='block';}
 }
 async function doRegister() {
   const e=document.getElementById('rerr'); e.style.display='none';
   if(!regRole){e.textContent='Choisissez votre profil';e.style.display='block';return;}
-  const nom=document.getElementById('rn').value, email=document.getElementById('re').value, pass=document.getElementById('rpass').value;
+  const nom=document.getElementById('rn').value,email=document.getElementById('re').value,pass=document.getElementById('rpass').value;
   if(!nom||!email||!pass){e.textContent='Remplissez tous les champs';e.style.display='block';return;}
+  if(pass.length<8){e.textContent='Mot de passe trop court (8 min)';e.style.display='block';return;}
   try {
     const {data,error}=await sb.auth.signUp({email,password:pass});
     if(error) throw error;
     try { await sb.from('profiles').insert({id:data.user.id,role:regRole,nom,email}); } catch(ex){}
     closeModal('auth-modal');
-    alert('Compte créé ! 🎉\nVérifiez votre email pour confirmer votre inscription.\n\nEnsuite connectez-vous avec vos identifiants.');
+    alert('Compte créé ! 🎉\n\nVérifiez votre email pour confirmer.\nEnsuite connectez-vous pour compléter votre profil.');
   } catch(err){e.textContent=err.message||'Erreur';e.style.display='block';}
 }
 
-// ── Data ──────────────────────────────────────────────────────────────────────
-const G=[
-  {id:1,nom:'Sophie M.',in:'SM',col:'#D4704A',ville:'Paris 11e',note:4.9,avis:47,animaux:['🐶','🐱'],tarif:25,dispo:true,trust:3,bio:"Passionnée d'animaux depuis l'enfance. Grand appartement avec jardin privatif."},
-  {id:2,nom:'Marc D.',in:'MD',col:'#4A8C5C',ville:'Paris 14e',note:4.7,avis:32,animaux:['🐶'],tarif:30,dispo:true,trust:2,bio:"Ancien éducateur canin, gardes avec éducation incluse."},
-  {id:3,nom:'Lucie B.',in:'LB',col:'#3B7DD8',ville:'Vincennes',note:5.0,avis:18,animaux:['🐱','🐰'],tarif:20,dispo:false,trust:3,bio:"Vétérinaire assistante, soins et amour garantis."},
-  {id:4,nom:'Tom R.',in:'TR',col:'#7A6A5A',ville:'Boulogne',note:4.8,avis:61,animaux:['🐶','🐱'],tarif:22,dispo:true,trust:1,bio:"Grand jardin à 15 min de Paris."},
-];
-const T=[{icon:'🪪',label:'Identité'},{icon:'⚖️',label:'Casier'},{icon:'🎓',label:'Formation'}];
-const VS=[{key:'id',t:"Vérification d'identité",s:"Carte d'identité + selfie",i:'🪪',d:3000},{key:'cas',t:"Casier judiciaire",s:"Connexion au registre national",i:'⚖️',d:4000},{key:'form',t:"Formation bien-être animal",s:"Module certifiant (30 min)",i:'🎓',d:2500}];
+function updateSitterUI() {
+  if (!currentUser || !currentProfile) return;
+  const zone = document.getElementById('sitter-auth-zone');
+  const logged = document.getElementById('sitter-logged');
+  const welcome = document.getElementById('sitter-welcome');
+  if (zone) zone.style.display='none';
+  if (logged) logged.style.display='block';
+  if (welcome) welcome.textContent='Connecté en tant que '+currentProfile.nom+' 🐾';
+}
 
-let af='', cf=false, vStep=0, vDone={}, rG=null, rA='';
+// ── Gardiens (depuis Supabase) ────────────────────────────────────────────────
+let allGardiens=[], af='';
 
-function render() {
+async function loadGardiens() {
   const el=document.getElementById('list'); if(!el) return;
-  const list=G.filter(g=>(!af||g.animaux.includes(af))&&(!cf||g.trust===3));
-  if(!list.length){el.innerHTML='<p style="text-align:center;padding:40px;color:#9A8878">Aucun gardien ne correspond.</p>';return;}
-  el.innerHTML=list.map(g=>{
-    const pct=Math.round(g.trust/3*100);
-    const stars='★'.repeat(Math.round(g.note))+'☆'.repeat(5-Math.round(g.note));
-    return`<div class="card" onclick="openDet(${g.id})">
+  el.innerHTML='<div style="text-align:center;padding:40px"><div class="spin"></div><p style="color:#9A8878;margin-top:12px;font-size:13px">Chargement…</p></div>';
+  try {
+    const {data,error} = await sb.from('gardiens')
+      .select('*, profiles(nom, email)')
+      .eq('dispo', true)
+      .order('created_at', {ascending:false});
+    if (error) throw error;
+    allGardiens = data || [];
+    renderGardiens();
+  } catch(e) {
+    // Si pas de gardiens en base, afficher exemples
+    allGardiens = [];
+    renderGardiens();
+  }
+}
+
+function renderGardiens() {
+  const el=document.getElementById('list'); if(!el) return;
+  const list = af ? allGardiens.filter(g=>g.animaux && g.animaux.includes(af)) : allGardiens;
+  if(!list.length) {
+    el.innerHTML=`<div style="text-align:center;padding:48px 20px">
+      <div style="font-size:48px;margin-bottom:12px">🐾</div>
+      <h3 class="display" style="font-size:20px;margin-bottom:8px">Aucun gardien pour l'instant</h3>
+      <p style="color:#9A8878;font-size:14px;line-height:1.7">Soyez le premier à vous inscrire comme gardien !<br>Partagez le lien à vos amis qui aiment les animaux.</p>
+    </div>`;
+    return;
+  }
+  el.innerHTML = list.map((g,i) => {
+    const nom = g.profiles?.nom || 'Gardien';
+    const initials = nom.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+    const col = COLORS[i % COLORS.length];
+    const stars = '★'.repeat(5)+'☆'.repeat(0);
+    const pct = ((g.trust_identity?1:0)+(g.trust_formation?1:0)) * 50;
+    return `<div class="card" onclick="openDet('${g.id}','${nom}','${initials}','${col}',${g.tarif||25},'${g.ville||''}','${(g.animaux||[]).join(',')}','${g.bio||''}',${pct})">
       <div style="display:flex;gap:12px;align-items:flex-start;margin-bottom:10px">
-        <div style="width:48px;height:48px;border-radius:50%;background:${g.col};display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:800;color:#fff;flex-shrink:0">${g.in}</div>
+        <div style="width:48px;height:48px;border-radius:50%;background:${col};display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:800;color:#fff;flex-shrink:0">${initials}</div>
         <div style="flex:1">
-          <div style="display:flex;justify-content:space-between">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start">
             <div>
-              <div style="font-weight:800;font-size:15px">${g.nom} <span style="font-size:10px;color:${g.dispo?'#4A8C5C':'#ccc'}">${g.dispo?'● Disponible':'● Indisponible'}</span></div>
-              <div style="font-size:12px;color:#9A8878">📍 ${g.ville}</div>
-              <div style="font-size:11px;color:#F5A623">${stars} <span style="color:#9A8878">${g.note} (${g.avis})</span></div>
+              <div style="font-weight:800;font-size:15px">${nom} <span style="font-size:10px;color:#4A8C5C">● Disponible</span></div>
+              <div style="font-size:12px;color:#9A8878">📍 ${g.ville||'France'}</div>
+              <div style="font-size:11px;color:#F5A623">${stars}</div>
             </div>
-            <div style="text-align:right;flex-shrink:0"><span style="font-size:18px;font-weight:900;color:#D4704A">${g.tarif}€</span><span style="font-size:11px;color:#9A8878">/nuit</span></div>
+            <div style="text-align:right;flex-shrink:0"><span style="font-size:17px;font-weight:900;color:#FF6B00">${g.tarif||25}€</span><span style="font-size:11px;color:#9A8878">/nuit</span></div>
           </div>
         </div>
       </div>
       <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
         <span style="font-size:10px;font-weight:700;color:${pct===100?'#4A8C5C':'#3B7DD8'}">${pct===100?'✅ CERTIFIÉ':'🔐 '+pct+'%'}</span>
         <div style="flex:1;height:4px;background:#EAE0D5;border-radius:4px"><div style="height:100%;width:${pct}%;background:${pct===100?'#4A8C5C':'#3B7DD8'};border-radius:4px"></div></div>
-        ${T.map((t,i)=>`<span title="${t.label}" style="opacity:${i<g.trust?1:0.2}">${t.icon}</span>`).join('')}
+        <span title="Identité" style="opacity:${g.trust_identity?1:0.2}">🪪</span>
+        <span title="Formation" style="opacity:${g.trust_formation?1:0.2}">🎓</span>
       </div>
-      <div>${g.animaux.map(a=>`<span class="tag">${a}</span>`).join('')}</div>
+      <div>${(g.animaux||[]).map(a=>`<span class="tag">${a}</span>`).join('')}</div>
     </div>`;
   }).join('');
 }
 
-function filterA(btn,a) {
-  ['f-dog','f-cat','f-rab'].forEach(id=>{const b=document.getElementById(id);if(b){b.style.borderColor='';b.style.color='';b.style.background='';}});
-  if(af===a){af='';}else{af=a;btn.style.borderColor='#D4704A';btn.style.color='#D4704A';btn.style.background='#FDF0EB';}
-  render();
+function fA(btn, a) {
+  document.querySelectorAll('#pg-owner .btn-ghost').forEach(b=>{b.style.borderColor='';b.style.color='';b.style.background='';});
+  af = af===a ? '' : (btn.style.borderColor='#FF6B00', btn.style.color='#FF6B00', btn.style.background='#FFF0E0', a);
+  renderGardiens();
 }
-function filterCert(){cf=!cf;const b=document.getElementById('f-cert');b.style.background=cf?'#EBF5EE':'';render();}
 
-function openDet(id) {
-  const g=G.find(x=>x.id===id);
-  const stars='★'.repeat(Math.round(g.note))+'☆'.repeat(5-Math.round(g.note));
+function openDet(id,nom,initials,col,tarif,ville,animauxStr,bio,pct) {
+  const animaux = animauxStr ? animauxStr.split(',') : [];
   document.getElementById('det').innerHTML=`
     <div style="display:flex;gap:14px;align-items:flex-start;margin-bottom:16px">
-      <div style="width:60px;height:60px;border-radius:50%;background:${g.col};display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:800;color:#fff;flex-shrink:0">${g.in}</div>
-      <div><h2 class="display" style="font-size:22px">${g.nom}</h2><div style="font-size:12px;color:#9A8878">📍 ${g.ville} · ${g.tarif}€/nuit</div><div style="font-size:13px;color:#F5A623">${stars} <span style="color:#9A8878;font-size:11px">${g.note} (${g.avis} avis)</span></div></div>
+      <div style="width:58px;height:58px;border-radius:50%;background:${col};display:flex;align-items:center;justify-content:center;font-size:19px;font-weight:800;color:#fff;flex-shrink:0">${initials}</div>
+      <div><h2 class="display" style="font-size:21px">${nom}</h2>
+      <div style="font-size:12px;color:#9A8878">📍 ${ville||'France'} · ${tarif}€/nuit</div></div>
     </div>
     <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px">
-      ${T.map((t,i)=>`<span style="display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:20px;font-size:11px;font-weight:700;background:${i<g.trust?'#EBF5EE':'#F0F0F0'};color:${i<g.trust?'#4A8C5C':'#aaa'};border:1px solid ${i<g.trust?'rgba(74,140,92,0.3)':'#ddd'}">${t.icon} ${t.label}</span>`).join('')}
+      <span style="display:inline-flex;align-items:center;gap:4px;padding:5px 12px;border-radius:20px;font-size:11px;font-weight:700;background:#EBF5EE;color:#4A8C5C;border:1px solid rgba(74,140,92,0.3)">🪪 Identité vérifiée</span>
+      <span style="display:inline-flex;align-items:center;gap:4px;padding:5px 12px;border-radius:20px;font-size:11px;font-weight:700;background:#FEF6E4;color:#E8A020;border:1px solid rgba(232,160,32,0.3)">🎓 Formation</span>
     </div>
-    <p style="color:#5C3D2E;font-size:13px;line-height:1.7;margin-bottom:14px">${g.bio}</p>
-    <div style="margin-bottom:16px;font-size:24px">${g.animaux.join(' ')}</div>
+    ${bio?`<p style="color:#1a1a1a;font-size:13px;line-height:1.7;margin-bottom:14px">${bio}</p>`:''}
+    ${animaux.length?`<div style="margin-bottom:16px"><span style="font-size:12px;color:#9A8878;font-weight:700">Animaux acceptés : </span><span style="font-size:20px">${animaux.join(' ')}</span></div>`:''}
     <div style="display:flex;gap:10px">
       <button class="btn btn-ghost" style="flex:1" onclick="closeModal('det-modal')">Retour</button>
-      <button class="btn btn-primary" style="flex:2;${!g.dispo?'opacity:0.4;cursor:not-allowed':''}" ${g.dispo?'onclick="openRes('+g.id+')"':''}>${g.dispo?'Réserver →':'Indisponible'}</button>
+      <button class="btn btn-primary" style="flex:2" onclick="openRes('${id}','${nom}',${tarif},'${animauxStr}')">Réserver →</button>
     </div>`;
   openModal('det-modal');
 }
 
-function openRes(id) {
-  rG=G.find(x=>x.id===id); rA='';
+// ── Réservation ───────────────────────────────────────────────────────────────
+let rId='', rNom='', rTarif=0, rAnimaux=[], rA='';
+
+function openRes(id, nom, tarif, animauxStr) {
+  rId=id; rNom=nom; rTarif=tarif; rAnimaux=animauxStr?animauxStr.split(','):[]; rA='';
   closeModal('det-modal');
   document.getElementById('res').innerHTML=`
-    <h2 class="display" style="font-size:20px;margin-bottom:4px">Réserver · ${rG.nom}</h2>
-    <p style="color:#9A8878;font-size:13px;margin-bottom:18px">${rG.tarif}€/nuit</p>
-    <div class="form-group"><label>Type d'animal</label>
-      <div style="display:flex;gap:8px">${rG.animaux.map(a=>`<button onclick="selA(this,'${a}')" style="font-size:22px;padding:8px 14px;border-radius:10px;border:1.5px solid #EAE0D5;background:transparent;cursor:pointer">${a}</button>`).join('')}</div>
+    <h2 class="display" style="font-size:19px;margin-bottom:4px">Réserver · ${nom}</h2>
+    <p style="color:#9A8878;font-size:13px;margin-bottom:16px">${tarif}€/nuit</p>
+    ${rAnimaux.length?`<div class="fg"><label>Type d'animal</label>
+      <div style="display:flex;gap:6px;flex-wrap:wrap">${rAnimaux.map(a=>`<button onclick="selA(this,'${a}')" style="font-size:19px;padding:7px 12px;border-radius:9px;border:1.5px solid #C8E6C9;background:transparent;cursor:pointer">${a}</button>`).join('')}</div>
+    </div>`:''}
+    <div class="fg"><label>Prénom de votre animal</label><input id="rpn" placeholder="Luna, Max, Cannelle…"></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+      <div class="fg"><label>Arrivée</label><input id="rd" type="date" oninput="calcP()"></div>
+      <div class="fg"><label>Départ</label><input id="rf" type="date" oninput="calcP()"></div>
     </div>
-    <div class="form-group"><label>Prénom de votre animal</label><input id="rpn" placeholder="Luna, Max…"></div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
-      <div class="form-group"><label>Arrivée</label><input id="rd" type="date" oninput="calcP()"></div>
-      <div class="form-group"><label>Départ</label><input id="rf" type="date" oninput="calcP()"></div>
+    <div id="rp" style="display:none;background:#EBF5EE;border-radius:9px;padding:10px 14px;margin-bottom:12px;justify-content:space-between">
+      <span id="rn" style="font-size:13px;color:#4A8C5C"></span><span id="rt" style="font-size:15px;font-weight:900;color:#4A8C5C"></span>
     </div>
-    <div id="rp" style="display:none;background:#EBF5EE;border-radius:10px;padding:10px 14px;margin-bottom:12px;display:none;justify-content:space-between">
-      <span id="rn" style="font-size:13px;color:#4A8C5C"></span><span id="rt" style="font-size:16px;font-weight:900;color:#4A8C5C"></span>
-    </div>
-    <div class="form-group"><label>Message</label><textarea id="rm" rows="2" placeholder="Habitudes, allergies…"></textarea></div>
-    <div style="display:flex;gap:10px;margin-top:8px">
+    <div class="fg"><label>Message (optionnel)</label><textarea id="rm" rows="2" placeholder="Habitudes, alimentation, allergies…"></textarea></div>
+    <p id="res-err" class="err"></p>
+    <div style="display:flex;gap:8px;margin-top:8px">
       <button class="btn btn-ghost" style="flex:1" onclick="closeModal('res-modal')">Annuler</button>
       <button class="btn btn-primary" style="flex:2" onclick="confirmR()">Confirmer →</button>
     </div>`;
   openModal('res-modal');
 }
 
-function selA(btn,a){rA=a;document.querySelectorAll('#res button').forEach(b=>{b.style.borderColor='#EAE0D5';b.style.background='transparent';});btn.style.borderColor='#D4704A';btn.style.background='#FDF0EB';}
+function selA(btn,a){rA=a;document.querySelectorAll('#res button[onclick^="selA"]').forEach(b=>{b.style.borderColor='#C8E6C9';b.style.background='transparent';});btn.style.borderColor='#FF6B00';btn.style.background='#FFF0E0';}
 function calcP(){
-  const s=document.getElementById('rd')?.value,f=document.getElementById('rf')?.value;
-  if(!s||!f)return;
+  const s=document.getElementById('rd')?.value,f=document.getElementById('rf')?.value; if(!s||!f)return;
   const n=Math.max(0,Math.round((new Date(f)-new Date(s))/86400000));
-  if(n>0){const p=document.getElementById('rp');p.style.display='flex';document.getElementById('rn').textContent=n+' nuit'+(n>1?'s':'')+' × '+rG.tarif+'€';document.getElementById('rt').textContent=(n*rG.tarif)+'€';}
+  if(n>0){const p=document.getElementById('rp');p.style.display='flex';document.getElementById('rn').textContent=n+' nuit'+(n>1?'s':'')+' × '+rTarif+'€';document.getElementById('rt').textContent=(n*rTarif)+'€';}
 }
-function confirmR(){
+
+async function confirmR(){
+  const e=document.getElementById('res-err'); e.style.display='none';
   const pn=document.getElementById('rpn')?.value,s=document.getElementById('rd')?.value,f=document.getElementById('rf')?.value;
-  if(!rA||!pn||!s||!f){alert('Remplissez tous les champs');return;}
+  if(!pn||!s||!f){e.textContent='Remplissez tous les champs';e.style.display='block';return;}
+  if(!currentUser){e.textContent='Connectez-vous pour réserver';e.style.display='block';return;}
   const n=Math.round((new Date(f)-new Date(s))/86400000);
+  try {
+    await sb.from('reservations').insert({
+      proprietaire_id: currentUser.id,
+      gardien_id: rId,
+      animal: rA||'🐾',
+      nom_animal: pn,
+      date_debut: s,
+      date_fin: f,
+      message: document.getElementById('rm')?.value||''
+    });
+  } catch(ex){ console.log('Resa save:', ex); }
   document.getElementById('res').innerHTML=`
     <div style="text-align:center;padding:16px 0">
-      <div style="font-size:52px;margin-bottom:12px">🎉</div>
-      <h2 class="display" style="font-size:24px;margin-bottom:8px">Demande envoyée !</h2>
-      <p style="color:#9A8878;font-size:14px;line-height:1.7;margin-bottom:18px">${rG.nom} vous répondra sous 24h. Vous recevrez une confirmation par email.</p>
-      <div style="background:#fff;border-radius:12px;padding:14px;text-align:left;margin-bottom:16px">
-        ${[['Gardien',rG.nom],['Animal',rA+' '+pn],['Dates',s+' → '+f],['Nuits',n],['Total',(n*rG.tarif)+'€']].map(([k,v])=>`<div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid #EAE0D5;font-size:13px"><span style="color:#9A8878">${k}</span><span style="font-weight:700">${v}</span></div>`).join('')}
+      <div style="font-size:50px;margin-bottom:12px">🎉</div>
+      <h2 class="display" style="font-size:22px;margin-bottom:8px">Demande envoyée !</h2>
+      <p style="color:#9A8878;font-size:14px;line-height:1.7;margin-bottom:16px">${rNom} a reçu votre demande et vous répondra sous 24h.</p>
+      <div style="background:#fff;border-radius:12px;padding:12px;text-align:left;margin-bottom:14px">
+        ${[['Gardien',rNom],['Animal',(rA||'🐾')+' · '+pn],['Dates',s+' → '+f],['Nuits',n],['Total estimé',(n*rTarif)+'€']].map(([k,v])=>`<div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid #C8E6C9;font-size:13px"><span style="color:#9A8878">${k}</span><span style="font-weight:700">${v}</span></div>`).join('')}
       </div>
       <button class="btn btn-primary" style="width:100%" onclick="closeModal('res-modal')">Fermer</button>
     </div>`;
 }
 
+// ── Profil gardien ────────────────────────────────────────────────────────────
+let selAnimaux=[];
+function togAnim(btn,a){
+  if(selAnimaux.includes(a)){selAnimaux=selAnimaux.filter(x=>x!==a);btn.style.borderColor='';btn.style.background='';}
+  else{selAnimaux.push(a);btn.style.borderColor='#FF6B00';btn.style.background='#FFF0E0';}
+}
+
+async function saveProfile(){
+  const e=document.getElementById('prof-err'); e.style.display='none';
+  if(!currentUser){e.textContent='Connectez-vous d\'abord';e.style.display='block';return;}
+  const ville=document.getElementById('g-ville').value;
+  const tarif=parseInt(document.getElementById('g-tarif').value)||25;
+  const bio=document.getElementById('g-bio').value;
+  if(!ville){e.textContent='Indiquez votre ville';e.style.display='block';return;}
+  try {
+    const {error}=await sb.from('gardiens').upsert({
+      id:currentUser.id, ville, animaux:selAnimaux, tarif, bio, dispo:true
+    });
+    if(error) throw error;
+    document.getElementById('prof-ok').style.display='block';
+    setTimeout(()=>document.getElementById('prof-ok').style.display='none',3000);
+  } catch(ex){e.textContent=ex.message||'Erreur';e.style.display='block';}
+}
+
 // ── Certification ─────────────────────────────────────────────────────────────
+const VS=[
+  {key:'id',t:"Vérification d'identité",s:"Photo de votre pièce d'identité + selfie",i:'🪪',d:3000},
+  {key:'form',t:"Formation bien-être animal",s:"Module certifiant soins et comportement",i:'🎓',d:2500},
+];
+let vStep=0, vDone={};
+
 function renderV(){
-  const el=document.getElementById('vsteps');if(!el)return;
+  const el=document.getElementById('vsteps'); if(!el) return;
   el.innerHTML=VS.map((s,i)=>{
     const done=vDone[s.key]==='done',pend=vDone[s.key]==='pending',act=i===vStep&&!done,lock=i>vStep&&!done;
-    return`<div style="background:${done?'#EBF5EE':act?'#FDF0EB':'#F7F3EE'};border-radius:12px;padding:14px 16px;margin-bottom:8px;border:1.5px solid ${done?'#4A8C5C':act?'#D4704A':'#EAE0D5'};opacity:${lock?0.5:1}">
+    return`<div style="background:${done?'#EBF5EE':act?'#FFF0E0':'#F7F3EE'};border-radius:10px;padding:12px 14px;margin-bottom:8px;border:1.5px solid ${done?'#4A8C5C':act?'#FF6B00':'#EAE0D5'};opacity:${lock?0.5:1}">
       <div style="display:flex;justify-content:space-between;align-items:center">
-        <div style="display:flex;gap:12px;align-items:center">
+        <div style="display:flex;gap:10px;align-items:center">
           <div style="font-size:24px">${done?'✅':s.i}</div>
           <div><div style="font-weight:800;font-size:13px">${s.t}</div><div style="font-size:11px;color:#9A8878">${s.s}</div></div>
         </div>
-        ${done?'<span style="font-size:12px;font-weight:700;color:#4A8C5C">✓ Validé</span>':pend?'<span style="font-size:12px;color:#D4704A">Vérification…</span>':act?`<button class="btn btn-sage" style="padding:6px 14px;font-size:12px" onclick="startV('${s.key}',${s.d})">Lancer</button>`:''}
+        ${done?'<span style="font-size:12px;font-weight:700;color:#4A8C5C">✓ Validé</span>':pend?'<span style="font-size:12px;color:#FF6B00">Vérification…</span>':act?`<button class="btn btn-sage" style="padding:5px 12px;font-size:12px" onclick="startV('${s.key}',${s.d})">Lancer</button>`:''}
       </div>
     </div>`;
   }).join('');
 }
 
-function startV(key,dur){
+async function startV(key,dur){
   vDone[key]='pending'; renderV();
-  setTimeout(()=>{
+  setTimeout(async()=>{
     vDone[key]='done';
     if(vStep<VS.length-1) vStep++;
-    if(VS.every(s=>vDone[s.key]==='done')) document.getElementById('vsuccess').style.display='block';
+    const allDone=VS.every(s=>vDone[s.key]==='done');
+    if(allDone){
+      document.getElementById('vsuccess').style.display='block';
+      if(currentUser){
+        try {
+          await sb.from('gardiens').update({
+            trust_identity: true, trust_formation: true
+          }).eq('id',currentUser.id);
+        } catch(ex){}
+      }
+    }
     renderV();
   },dur);
 }
 </script>
 </body>
-</html>
+</html> 
