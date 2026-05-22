@@ -1,3 +1,30 @@
+Aucun élément sélectionné
+
+Aller au contenu
+Utiliser Gmail avec un lecteur d'écran
+
+1 sur 2 041
+Patipatte
+Boîte de réception
+
+Аrnaud Ntahompagaze <arnaudntaho24@gmail.com>
+19:10 (il y a 51 minutes)
+À moi
+
+https://patipatte.github.io/patipatte
+3
+
+Аrnaud Ntahompagaze
+19:54 (il y a 6 minutes)
+create table profiles ( id uuid references auth.users primary key, role text check (role in ('proprietaire','gardien')), nom text, email text, created_at timest
+
+Аrnaud Ntahompagaze <arnaudntaho24@gmail.com>
+Pièces jointes
+20:00 (il y a 0 minute)
+À moi
+
+ Une pièce jointe
+  •  Analysé par Gmail
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -191,7 +218,65 @@
     .stats-grid { grid-template-columns: repeat(3, 1fr); }
   }
 </style>
-</head>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const SUPABASE_URL = 'https://vhiexugzcwfnxyujmuah.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_ORg7VY3lEDTwYDly4Q_ywQ_J74P4r7g';
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+// Auth functions
+async function signUp(email, password, role, nom) {
+  const { data, error } = await sb.auth.signUp({
+    email, password,
+    options: { data: { role, nom } }
+  });
+  if (error) throw error;
+  await sb.from('profiles').insert({ id: data.user.id, role, nom, email });
+  return data;
+}
+
+async function signIn(email, password) {
+  const { data, error } = await sb.auth.signInWithPassword({ email, password });
+  if (error) throw error;
+  return data;
+}
+
+async function signOut() {
+  await sb.auth.signOut();
+  currentUser = null;
+  currentProfile = null;
+  goHome();
+}
+
+async function getProfile(userId) {
+  const { data } = await sb.from('profiles').select('*').eq('id', userId).single();
+  return data;
+}
+
+async function saveReservation(gardienId, animal, nomAnimal, debut, fin, message) {
+  if (!currentUser) { alert('Connectez-vous pour réserver !'); return; }
+  const { error } = await sb.from('reservations').insert({
+    proprietaire_id: currentUser.id,
+    gardien_id: gardienId,
+    animal, nom_animal: nomAnimal,
+    date_debut: debut, date_fin: fin,
+    message
+  });
+  if (error) throw error;
+}
+
+let currentUser = null;
+let currentProfile = null;
+
+// Check session on load
+window.addEventListener('load', async () => {
+  const { data: { session } } = await sb.auth.getSession();
+  if (session) {
+    currentUser = session.user;
+    currentProfile = await getProfile(session.user.id);
+  }
+});
+</script></head>
 <body>
 
 <!-- LANDING -->
@@ -673,7 +758,111 @@ document.querySelectorAll('.modal-overlay').forEach(el => {
   el.addEventListener('click', e => { if (e.target === el) closeModal(el.id); });
 });
 </script>
+
+<!-- AUTH MODAL -->
+<div class="modal-overlay" id="auth-modal">
+  <div class="modal" style="max-width:420px">
+    <button class="modal-close" onclick="closeModal('auth-modal')">✕</button>
+    <div id="auth-content">
+      <h2 class="display" style="margin-bottom:4px">Connexion</h2>
+      <p style="color:var(--muted);font-size:13px;margin-bottom:20px">Connectez-vous ou créez un compte</p>
+      <div style="display:flex;gap:4px;background:var(--bg);border-radius:10px;padding:4px;margin-bottom:20px">
+        <button onclick="showAuthTab('login')" id="tab-login" style="flex:1;padding:8px;border:none;border-radius:8px;cursor:pointer;background:white;font-family:Nunito,sans-serif;font-weight:700;font-size:13px">Connexion</button>
+        <button onclick="showAuthTab('register')" id="tab-register" style="flex:1;padding:8px;border:none;border-radius:8px;cursor:pointer;background:transparent;color:#9A8878;font-family:Nunito,sans-serif;font-size:13px">Inscription</button>
+      </div>
+
+      <div id="login-form">
+        <div class="form-group"><label class="form-label">Email</label><input class="form-input" id="login-email" type="email" placeholder="vous@email.com"></div>
+        <div class="form-group"><label class="form-label">Mot de passe</label><input class="form-input" id="login-password" type="password" placeholder="••••••••"></div>
+        <div id="login-error" style="color:#ef4444;font-size:12px;margin-bottom:10px;display:none"></div>
+        <button class="btn-primary" onclick="handleLogin()">Se connecter →</button>
+      </div>
+
+      <div id="register-form" style="display:none">
+        <div style="display:flex;gap:10px;margin-bottom:14px">
+          <button onclick="setRegisterRole('proprietaire')" id="role-prop" style="flex:1;padding:12px;border:1.5px solid var(--border);border-radius:10px;cursor:pointer;background:transparent;font-family:Nunito,sans-serif;font-size:13px">❤️ Propriétaire</button>
+          <button onclick="setRegisterRole('gardien')" id="role-gard" style="flex:1;padding:12px;border:1.5px solid var(--border);border-radius:10px;cursor:pointer;background:transparent;font-family:Nunito,sans-serif;font-size:13px">🏠 Gardien</button>
+        </div>
+        <div class="form-group"><label class="form-label">Nom complet</label><input class="form-input" id="reg-nom" placeholder="Prénom Nom"></div>
+        <div class="form-group"><label class="form-label">Email</label><input class="form-input" id="reg-email" type="email" placeholder="vous@email.com"></div>
+        <div class="form-group"><label class="form-label">Mot de passe</label><input class="form-input" id="reg-password" type="password" placeholder="8 caractères minimum"></div>
+        <div id="reg-error" style="color:#ef4444;font-size:12px;margin-bottom:10px;display:none"></div>
+        <button class="btn-primary" onclick="handleRegister()">Créer mon compte →</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+let registerRole = '';
+
+function showAuthTab(tab) {
+  document.getElementById('login-form').style.display = tab === 'login' ? 'block' : 'none';
+  document.getElementById('register-form').style.display = tab === 'register' ? 'block' : 'none';
+  document.getElementById('tab-login').style.background = tab === 'login' ? 'white' : 'transparent';
+  document.getElementById('tab-register').style.background = tab === 'register' ? 'white' : 'transparent';
+  document.getElementById('tab-login').style.color = tab === 'login' ? '#1E1208' : '#9A8878';
+  document.getElementById('tab-register').style.color = tab === 'register' ? '#1E1208' : '#9A8878';
+}
+
+function setRegisterRole(role) {
+  registerRole = role;
+  document.getElementById('role-prop').style.borderColor = role === 'proprietaire' ? '#D4704A' : '#EAE0D5';
+  document.getElementById('role-prop').style.background = role === 'proprietaire' ? '#FDF0EB' : 'transparent';
+  document.getElementById('role-gard').style.borderColor = role === 'gardien' ? '#4A8C5C' : '#EAE0D5';
+  document.getElementById('role-gard').style.background = role === 'gardien' ? '#EBF5EE' : 'transparent';
+}
+
+async function handleLogin() {
+  const email = document.getElementById('login-email').value;
+  const password = document.getElementById('login-password').value;
+  const errEl = document.getElementById('login-error');
+  errEl.style.display = 'none';
+  try {
+    const data = await signIn(email, password);
+    currentUser = data.user;
+    currentProfile = await getProfile(data.user.id);
+    closeModal('auth-modal');
+    updateNavForUser();
+    alert('Bienvenue ' + (currentProfile?.nom || '') + ' !');
+  } catch(e) {
+    errEl.textContent = 'Email ou mot de passe incorrect';
+    errEl.style.display = 'block';
+  }
+}
+
+async function handleRegister() {
+  const nom = document.getElementById('reg-nom').value;
+  const email = document.getElementById('reg-email').value;
+  const password = document.getElementById('reg-password').value;
+  const errEl = document.getElementById('reg-error');
+  errEl.style.display = 'none';
+  if (!registerRole) { errEl.textContent = 'Choisissez votre profil'; errEl.style.display = 'block'; return; }
+  try {
+    await signUp(email, password, registerRole, nom);
+    closeModal('auth-modal');
+    alert('Compte créé ! Vérifiez votre email pour confirmer.');
+  } catch(e) {
+    errEl.textContent = e.message || 'Erreur lors de la création';
+    errEl.style.display = 'block';
+  }
+}
+
+function updateNavForUser() {
+  const navRight = document.querySelector('.nav-right');
+  if (!navRight) return;
+  if (currentUser && currentProfile) {
+    const btn = navRight.querySelector('.btn-ghost');
+    if (btn) btn.textContent = 'Déconnexion';
+    if (btn) btn.onclick = signOut;
+  }
+}
+
+function openAuthModal() {
+  openModal('auth-modal');
+}
+</script>
 </body>
 </html>
-index.html 2.html
-Affichage de index.html 2.html en cours...
+Index.html.html
+Affichage de Index.html.html en cours...
